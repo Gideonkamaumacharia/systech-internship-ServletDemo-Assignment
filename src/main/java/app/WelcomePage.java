@@ -1,4 +1,4 @@
-package com.gideon.jakartaassignment;
+package app;
 
 
 import jakarta.servlet.*;
@@ -24,8 +24,6 @@ public class WelcomePage implements Servlet {
     @Override
     public void service(ServletRequest request, ServletResponse response)
             throws ServletException, IOException {
-
-        System.out.println("DEBUG: WelcomePage Servlet => service() called. Generating HTML.");
 
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
