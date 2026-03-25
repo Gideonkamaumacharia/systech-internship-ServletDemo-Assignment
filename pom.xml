@@ -61,7 +61,36 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>3.3.2</version> <!-- or latest -->
+            </plugin>
+            <!-- WAR Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+            </plugin>
+
+            <!-- WildFly Plugin -->
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>4.2.1.Final</version>
+
+                <configuration>
+                    <!-- Path to WildFly -->
+                    <jbossHome>/opt/wildfly</jbossHome>
+
+                    <!-- Server connection -->
+                    <hostname>localhost</hostname>
+                    <port>9990</port>
+
+                    <!-- Management user -->
+                    <username>admin</username>
+                    <password>admin123</password>
+
+                    <!-- Deployment -->
+                    <filename>${project.build.finalName}.war</filename>
+                </configuration>
             </plugin>
         </plugins>
     </build>
