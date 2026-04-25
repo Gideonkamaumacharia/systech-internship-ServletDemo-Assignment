@@ -6,33 +6,37 @@
          version="6.0">
 
     <display-name>Car Showroom Application</display-name>
+    <context-param>
+        <param-name>appPassword</param-name>
+        <param-value>1234</param-value>
+    </context-param>
+    <context-param>
+        <param-name>uname</param-name>
+        <param-value>Gideon</param-value>
+    </context-param>
+    <context-param>
+        <param-name>email</param-name>
+        <param-value>gideonkamau@gmail.com</param-value>
+    </context-param>
 
-    <servlet>
-        <servlet-name>WelcomeServlet</servlet-name>
-        <servlet-class>app.WelcomePage</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>WelcomeServlet</servlet-name>
-        <url-pattern>/home</url-pattern>
-    </servlet-mapping>
+    <listener>
+        <listener-class>app.listener.ShowroomLifecycleListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>app.listener.InventoryMonitor</listener-class>
+    </listener>
+    <listener>
+        <listener-class>app.listener.VisitorTrackingListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>app.listener.UserActivityMonitor</listener-class>
+    </listener>
 
-    <servlet>
-        <servlet-name>SpecsServlet</servlet-name>
-        <servlet-class>app.SpecsPage</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>SpecsServlet</servlet-name>
-        <url-pattern>/specs</url-pattern>
-    </servlet-mapping>
-    
-    <servlet>
-        <servlet-name>InventoryServlet</servlet-name>
-        <servlet-class>app.InventoryPage</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>InventoryServlet</servlet-name>
-        <url-pattern>/inventory</url-pattern>
-    </servlet-mapping>
+
+
+    <welcome-file-list>
+        <welcome-file>login</welcome-file>
+    </welcome-file-list>
 
     <welcome-file-list>
         <welcome-file>home</welcome-file>

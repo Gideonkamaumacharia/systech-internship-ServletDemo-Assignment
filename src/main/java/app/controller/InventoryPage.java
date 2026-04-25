@@ -1,23 +1,45 @@
-package app;
+package app.controller;
 
+import app.CarBean;
+import app.model.Car;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import jakarta.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+@WebServlet(urlPatterns = {"/inventory"})
 public class InventoryPage extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
+        HttpServletRequest httpReq = req;
+        HttpSession session = httpReq.getSession(false);
+
+        //For the browser cache not the server
+        resp.setHeader("Cache-Control","no-cache, no-store, must-revalidate");
+        resp.setHeader("Pragma","no-cache");
+        resp.setDateHeader("Expires",0);
+
+        if (session == null || session.getAttribute("userAuthenticated") == null) {
+            // Not logged in! Send them back to the gate
+            HttpServletResponse httpResp = resp;
+            resp.sendRedirect("login?dest=inventory");
+            return;
+        }
+
+        req.getRequestDispatcher("inventory.jsp").forward(req,resp);
+
         resp.setContentType("text/html");
         PrintWriter out = resp.getWriter();
 
         out.println("<!DOCTYPE html>");
         out.println("<html><head><title>Car Inventory | Register</title>");
-        // Using Google Fonts for a more "premium" feel
+
         out.println("<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap' rel='stylesheet'>");
         out.println("<style>");
         out.println("body { font-family: 'Inter', sans-serif; margin: 0; background-color: #f0f2f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; }");
@@ -39,13 +61,7 @@ public class InventoryPage extends HttpServlet {
         out.println("<h1>Register New Vehicle</h1>");
         out.println("<p style='color:#888; font-size:14px;'>Enter details for the showroom inventory.</p>");
 
-        out.println("<form action='inventory' method='POST'>");
-        out.println("<label>Car Model</label>");
-        out.println("<input type='text' name='carModel' placeholder='e.g. Range Rover Sport' required>");
-        out.println("<label>Engine Specification</label>");
-        out.println("<input type='text' name='engineType' placeholder='e.g. 5.0L V8 Supercharged' required>");
-        out.println("<button type='submit'>Add to Showroom</button>");
-        out.println("</form>");
+
 
         out.println("<a href='home' class='back-link'>&larr; Return to Dashboard</a>");
         out.println("</div></div></body></html>");
@@ -55,12 +71,52 @@ public class InventoryPage extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
+        ServletContext context = getServletContext();
+
+        Integer count =(Integer)context.getAttribute("totalCars");
+        //count = (count == null)?1 : count + 1;
+        count = count +1;
+        context.setAttribute("totalCars",count);
+
         String model = req.getParameter("carModel");
+        context.setAttribute("latestCar",model);
+        String systemPassword = context.getInitParameter("appPassword");
+
+        List<Car> carList;
+
+        synchronized(context){
+            carList = (List<Car>)context.getAttribute("carList");
+            if (carList == null){
+                carList = new ArrayList<>();
+                context.setAttribute("carList",carList);
+            }
+
+            Car myCar = new Car();
+
+            myCar.setCarModel(req.getParameter("carModel"));
+            myCar.setEngineType(req.getParameter("engineType"));
+            String priceStr = req.getParameter("price");
+            if (priceStr != null && !priceStr.isEmpty()) {
+                myCar.setPrice(Double.parseDouble(priceStr));
+            }
+            String yearStr = req.getParameter("year");
+            if(yearStr != null && !yearStr.isEmpty()){
+                myCar.setYear(Integer.parseInt(yearStr));
+            }
+
+            carList.add(myCar);
+
+        }
+        resp.sendRedirect("list");
+
         String engine = req.getParameter("engineType");
 
         resp.setContentType("text/html");
         PrintWriter out = resp.getWriter();
+            displaySuccess(out,model,engine);
 
+    }
+    private void displaySuccess(PrintWriter out,String model,String engine){
         out.println("<!DOCTYPE html>");
         out.println("<html><head>");
         out.println("<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap' rel='stylesheet'>");
@@ -78,12 +134,7 @@ public class InventoryPage extends HttpServlet {
         out.println("<h1>Registration Complete</h1>");
         out.println("<p>The vehicle has been successfully added to the system.</p>");
 
-        out.println("<div class='details'>");
-        out.println("<strong>Model:</strong> " + model.toUpperCase() + "<br>");
-        out.println("<strong>Engine:</strong> " + engine);
-        out.println("</div>");
 
-        out.println("<a href='inventory'>Add Another</a> | <a href='home'>Dashboard</a>");
         out.println("</div></body></html>");
     }
 }

@@ -1,9 +1,15 @@
-package app;
+package app.controller;
 
 import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
+@WebServlet(name = "WelcomePage",
+urlPatterns = {"/home"})
 public class WelcomePage implements Servlet {
 
     private ServletConfig config;
@@ -20,6 +26,39 @@ public class WelcomePage implements Servlet {
 
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
+
+        HttpServletRequest httpReq = (HttpServletRequest) request;
+        HttpSession session = httpReq.getSession(false);
+
+
+
+        out.println("<div class='container'>");
+        if( session != null && session.getAttribute("lastViewed") != null) {
+            String favCar = (String) session.getAttribute("lastViewed");
+            out.println("<p style='color: #2a5298;'>Welcome back! You were recently eyeing the <strong>" + favCar + "</strong>.</p>");
+            out.println();
+            session.setMaxInactiveInterval(60);// Instead of killing the session, just set the "Life Span" to 60 seconds
+
+        }
+
+
+
+        ServletContext context = getServletConfig().getServletContext();
+        Integer total = (Integer) context.getAttribute("totalCars");
+        String latest = (String) context.getAttribute("latestCar");
+
+        if(total != null){
+            out.println("<div style='background: #e9ecef; padding: 15px; border-radius: 8px; margin-top: 20px;'>");
+            out.println("<strong>Live Showroom Update:</strong> " + total + " Vehicles in Fleet.");
+            out.println("<br><small>Latest Arrival: <span style='color: #1e3c72; font-weight: bold;'>" + latest + "</span></small>");
+            out.println("</div>");
+        }
+
+        Integer users = (Integer) context.getAttribute("activeUsers");
+        if(users != null){
+            out.println("<div style='background: #e9ecef; padding: 15px; border-radius: 8px; margin-top: 20px;'>");
+            out.println("<strong>Active Users:</strong> " + users + " Users in the website.");
+        }
 
         out.println("<!DOCTYPE html>");
         out.println("<html><head>");
@@ -72,11 +111,15 @@ public class WelcomePage implements Servlet {
         out.println("<strong>Car Inventory</strong>");
         out.println("</a>");
 
+        out.println("<a href='user' class='nav-item'>");
+        out.println("<strong>Showroom users</strong>");
+        out.println("</a>");
+
         out.println("</div>");
         out.println("</div>");
 
         out.println("<footer style='text-align:center; padding-bottom:40px; color:#aaa; font-size:0.8rem;'>");
-        out.println("Built for Cohort 12 learning  Portal &bull; WildFly 39.0.1");
+        out.println("Built by Gideon &bull; ");
         out.println("</footer>");
 
         out.println("</body></html>");
