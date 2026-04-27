@@ -7,13 +7,9 @@ import app.framework.ShowroomTableCol;
 
 import java.io.Serializable;
 
-@ShowroomForm(label = "Register New User", actionUrl = "./users")
-@ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "./users",listJsp = "userList.jsp")
+@ShowroomForm(label = "Register New User", actionUrl = "./user")
+@ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "./user",listJsp = "userList.jsp")
 public class User implements Serializable {
-
-    @ShowroomFormField(label = "ID", placeholder = "Enter user ID")
-    @ShowroomTableCol(label = "ID")
-    private Long id;
 
     @ShowroomFormField(label = "UserName", placeholder = "Enter userName")
     @ShowroomTableCol(label = "User Name")
@@ -27,13 +23,6 @@ public class User implements Serializable {
     @ShowroomTableCol(label = "Role")
     private String role; // e.g., "ADMIN", "SALES"
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUsername() {
         return username;

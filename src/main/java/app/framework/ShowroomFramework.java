@@ -1,14 +1,17 @@
 package app.framework;
 
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+@ApplicationScoped
 public class ShowroomFramework {
 
-    public static void htmlForm(PrintWriter writer, Class<?> clazz){
+    public void htmlForm(PrintWriter writer, Class<?> clazz){
 
         if (!clazz.isAnnotationPresent(ShowroomForm.class))
             return;
@@ -32,7 +35,7 @@ public class ShowroomFramework {
         writer.println("</form>");
     }
 
-    public static void htmlTable(PrintWriter writer, Class<?> clazz,
+    public void htmlTable(PrintWriter writer, Class<?> clazz,
                                  List<?> tableData) {
 
         if (!clazz.isAnnotationPresent(ShowroomTable.class))

@@ -2,9 +2,9 @@ package app.action;
 
 import app.framework.ShowroomFramework;
 import app.framework.ShowroomTable;
-import app.utility.DatabaseManager;
-import app.utility.GenericDao;
-import jakarta.servlet.RequestDispatcher;
+import app.utility.db.GenericDao;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +15,6 @@ import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.beanutils.converters.BigDecimalConverter;
-import org.eclipse.tags.shaded.org.apache.bcel.generic.ANEWARRAY;
 
 
 import java.io.IOException;
@@ -27,14 +26,19 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 public class BaseAction<T> extends HttpServlet {
 
-    private final GenericDao dao = new GenericDao();
+    @ApplicationScoped
+    @Inject
+    GenericDao dao;
+
+    @ApplicationScoped
+    @Inject
+    ShowroomFramework showroomFramework;
 
     @SuppressWarnings("unchecked")
     public T serializeForm(Map<String, String[]> requestMap) {
@@ -84,19 +88,19 @@ public class BaseAction<T> extends HttpServlet {
     @SuppressWarnings("unchecked")
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //if session exist, use it, otherwise create a new one
-        HttpSession session = req.getSession();
-
 
         try {
             T entity = this.serializeForm(req.getParameterMap());
             dao.insert(this.getType(), entity);
+            System.out.println("DAO insert called for: " + entity.getClass().getSimpleName());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
         if (this.getType().isAnnotationPresent(ShowroomTable.class)) {
             resp.sendRedirect(this.getType()
-                    .getAnnotation(ShowroomTable.class).tableUrl());
+                    .getAnnotation(ShowroomTable.class).tableUrl());//redirect to tableUrl
+            //for car-> list (which is CarList)
 
         } else {
             resp.sendRedirect("./home");
@@ -109,7 +113,24 @@ public class BaseAction<T> extends HttpServlet {
         //if session exist, use it, otherwise create a new one
         HttpSession session = req.getSession();
 
+        //For the browser cache not the server
+        resp.setHeader("Cache-Control","no-cache, no-store, must-revalidate");
+        resp.setHeader("Pragma","no-cache");
+        resp.setDateHeader("Expires",0);
+
+        if (session == null || session.getAttribute("userAuthenticated") == null) {
+            // Not logged in! Send them back to the gate
+            HttpServletResponse httpResp = resp;
+            String path = req.getServletPath(); //use the request to get the path
+            String dest = path.substring(1);//strip the /
+            resp.sendRedirect("login?dest=" + dest);
+            return;
+        }
+
         ServletConfig config = getServletConfig();
+
+        Class<T> clazz = getType();
+        ShowroomTable table = clazz.getAnnotation(ShowroomTable.class);
 
         PrintWriter writer = resp.getWriter();
         writer.println("<!DOCTYPE html>");
@@ -141,12 +162,14 @@ public class BaseAction<T> extends HttpServlet {
 
 // Form
         writer.println("<section>");
-        ShowroomFramework.htmlForm(writer, this.getType());
+        showroomFramework.htmlForm(writer, this.getType());
         writer.println("</section>");
+        writer.println("<a href=\"" + table.tableUrl() + "\" class=\"nav-link\">View Registered " + table.label() + "</a>");
 
-        RequestDispatcher dispatcher = req.getRequestDispatcher("footer");
-        dispatcher.include(req, resp);
-
+        writer.println("<div class='footer-nav'>");
+        writer.println("<a href='home' class='back-btn'>&larr; Return to Dashboard</a>");
+        writer.println("<span style='font-size: 12px; color: #ccc;'>v1.0.4-STABLE</span>");
+        writer.println("</div>");
         writer.println("</body>");
         writer.println("</html>");
 

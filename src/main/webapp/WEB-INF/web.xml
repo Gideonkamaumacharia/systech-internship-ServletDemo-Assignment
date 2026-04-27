@@ -12,7 +12,7 @@
     </context-param>
     <context-param>
         <param-name>uname</param-name>
-        <param-value>Gideon</param-value>
+        <param-value>Admin</param-value>
     </context-param>
     <context-param>
         <param-name>email</param-name>

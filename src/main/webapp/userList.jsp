@@ -26,47 +26,45 @@
 <div class="container">
     <h1>Registered Users</h1>
 
-    <c:if test="${empty applicationScope.userList}">
+    <c:if test="${empty dataList}">
         <p>There are no users yet.</p>
     </c:if>
     <table>
         <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Password</th>
             <th>Role</th>
 
+
         </tr>
-        <c:forEach var="user" items="${applicationScope.userList}">
+        <c:forEach var="user" items="${dataList}">
             <tr>
-                <td>${user.id}</td>
                 <td>${user.username}</td>
                 <td>${user.password}</td>
-                <td>${user.role}</td>
+
                 <td>
-                    <c:if test="${user.role eq 'ADMIN'}">
+                    <c:if test="${userBean.isAdmin(user)}">
                         <span style="background: gold; padding: 2px 5px; font-size: 10px;">ADMIN</span>
                     </c:if>
                 </td>
-
             </tr>
         </c:forEach>
     </table>
     <c:choose>
-        <c:when test="${applicationScope.userList.size() gt 5}">
+        <c:when test="${dataList.size() gt 5}">
             <p style="color: red;">The room is crowded!</p>
         </c:when>
-        <c:when test="${not empty applicationScope.userList and applicationScope.userList.size() lt 5}">
+        <c:when test="${not empty dataList and dataList.size() lt 5}">
             <p>We have room for many users!</p>
         </c:when>
         <c:otherwise>
-            <p>Normal number of users.</p>
+            <p>There are no users yet.</p>
         </c:otherwise>
     </c:choose>
     <div class="navigation">
         <a href="user" class="add-link">&larr; Register New User</a>
         <span> | </span>
-        <a href="user_list" class="nav-link">View Registered Users</a>
+        <%--<a href="user_list" class="nav-link">View Registered Users</a>--%>
     </div>
 </div>
 </body>

@@ -1,6 +1,5 @@
 package app.controller;
 
-import app.CarBean;
 import app.model.Car;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;

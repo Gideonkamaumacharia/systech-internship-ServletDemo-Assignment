@@ -1,17 +1,25 @@
-package app.utility;
+package app.utility.db;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
+import javax.sql.DataSource;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@ApplicationScoped
 public class GenericDao {
+
+    @Inject
+    private DataSource dataSource;
 
     public void insert(Class<?> clazz, Object entity) {
 
         try (Connection connection = DatabaseManager.getInstance().getConnection()) {
 
-            String tableName = clazz.getSimpleName().toLowerCase();
+            String tableName = clazz.getSimpleName().toLowerCase() + "s";
             Field[] fields = clazz.getDeclaredFields();
 
             StringBuilder columns = new StringBuilder();
@@ -40,6 +48,7 @@ public class GenericDao {
             String sql = "INSERT INTO " + tableName +
                     " (" + columns + ") VALUES (" + placeholders + ")";
 
+
             PreparedStatement ps = connection.prepareStatement(sql);
 
             for (int i = 0; i < values.size(); i++) {
@@ -57,7 +66,7 @@ public class GenericDao {
     public <T> List<T> selectAll(Class<T> clazz) {
 
         List<T> entities = new ArrayList<>();
-        String tableName = clazz.getSimpleName().toLowerCase();
+        String tableName = clazz.getSimpleName().toLowerCase()+"s";
         String sql = "SELECT * FROM " + tableName;
 
         try (Connection connection = DatabaseManager.getInstance().getConnection();

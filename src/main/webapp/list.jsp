@@ -26,7 +26,7 @@
 <div class="container">
     <h1>Showroom Inventory</h1>
 
-    <c:if test="${empty applicationScope.carList}">
+    <c:if test="${empty dataList}">
         <p>There are no cars in the showroom yet.</p>
     </c:if>
     <table>
@@ -37,7 +37,7 @@
             <th>Year</th>
             <th>Price</th>
         </tr>
-        <c:forEach var="car" items="${applicationScope.carList}">
+        <c:forEach var="car" items="${dataList}">
             <tr>
                 <td>${car.carModel}</td>
                 <c:if test="${car.carModel eq 'Range Rover Sport'}">
@@ -47,14 +47,19 @@
                 <td>${car.performanceLabel}</td>
                 <td>${car.year}</td>
                 <td>${car.price}</td>
+                <td>
+                    <c:if test="${carValidator.isExpensive(car)}">
+                        <span style="color: red; font-weight: bold;">EXPENSIVE</span>
+                    </c:if>
+                </td>
             </tr>
         </c:forEach>
     </table>
     <c:choose>
-        <c:when test="${applicationScope.carList.size() gt 5}">
+        <c:when test="${dataList.size() gt 5}">
             <p style="color: red;">The showroom is getting crowded!</p>
         </c:when>
-        <c:when test="${not empty applicationScope.carList and applicationScope.carList.size() lt 5}">
+        <c:when test="${not empty dataList and dataList.size() lt 5}">
             <p>We have room for more cars!</p>
         </c:when>
         <c:otherwise>
@@ -62,7 +67,7 @@
         </c:otherwise>
     </c:choose>
     <div class="navigation">
-    <a href="inventory" class="add-link">&larr; Register New Vehicle</a>
+    <a href="car" class="add-link">&larr; Register New Vehicle</a>
     <span> | </span>
     <a href="list" class="nav-link">View Registered Cars</a>
     </div>

@@ -107,7 +107,7 @@ public class WelcomePage implements Servlet {
         out.println("<strong>Technical Specs</strong>");
         out.println("</a>");
 
-        out.println("<a href='inventory' class='nav-item'>");
+        out.println("<a href='car' class='nav-item'>");
         out.println("<strong>Car Inventory</strong>");
         out.println("</a>");
 

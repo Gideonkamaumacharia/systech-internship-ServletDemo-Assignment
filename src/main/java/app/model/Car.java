@@ -7,23 +7,23 @@ import app.framework.ShowroomTableCol;
 
 import java.io.Serializable;
 
-@ShowroomForm(label = "Register New Vehicle", actionUrl = "./inventory")
-@ShowroomTable(label = "Showroom Inventory", tableUrl = "./list", registerUrl = "./inventory")
+@ShowroomForm(label = "Register New Vehicle", actionUrl = "./car")
+@ShowroomTable(label = "Showroom Inventory", tableUrl = "./list", registerUrl = "./car")
 public class Car implements Serializable {
 
-    @ShowroomFormField(label = "Car Model",name = "Model", placeholder = "e.g. Range Rover Sport")
+    @ShowroomFormField(label = "Car Model",name = "carModel", placeholder = "Enter car name")
     @ShowroomTableCol(label = "Model")
     private String carModel;
 
-    @ShowroomFormField(label = "Engine Specification",name = "Engine", placeholder = "Enter engine type")
+    @ShowroomFormField(label = "Engine Specification",name = "engineType", placeholder = "Enter engine type")
     @ShowroomTableCol(label = "Engine Type")
     private String engineType;
 
-    @ShowroomFormField(label = "Year",name = "Year", placeholder = "e.g. 5.0L V8 Supercharged")
+    @ShowroomFormField(label = "Year",name = "year", placeholder = "Enter engine type")
     @ShowroomTableCol(label = "Year")
     private Integer year;
 
-    @ShowroomFormField(label = "Price",name = "Price", placeholder = "Enter price")
+    @ShowroomFormField(label = "Price",name = "price", placeholder = "Enter price")
     @ShowroomTableCol(label = "Price")
     private Double price;
 

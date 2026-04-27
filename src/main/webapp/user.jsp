@@ -16,11 +16,11 @@
 </style>
 
 
-<div class="form-container">
+<%-- <div class="form-container">
     <h1>Register New User</h1>
     <form action="user" method="POST">
-        <label>ID</label>
-        <input type="number" name="id" placeholder="Enter user ID" required>
+<%--        <label>ID</label>--%>
+<%--        <input type="number" name="id" placeholder="Enter user ID" required>--%>
 
         <label>User Name </label>
         <input type="text" name="username" placeholder="Enter user name" required>
@@ -37,4 +37,4 @@
             <a href="user_list" class="nav-link">View Users</a>
         </div>
     </form>
-</div>
+</div>--%>

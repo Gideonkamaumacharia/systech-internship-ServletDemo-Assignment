@@ -18,7 +18,7 @@
 
 <div class="form-container">
     <h1>Register New Vehicle</h1>
-    <form action="inventory" method="POST">
+    <form action="car" method="POST">
         <label>Car Model</label>
         <input type="text" name="carModel" placeholder="e.g. Range Rover Sport" required>
 

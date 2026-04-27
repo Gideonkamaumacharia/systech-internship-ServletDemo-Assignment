@@ -12,5 +12,5 @@ public @interface ShowroomFormField {
 
     String name()  default "";;
 
-    String placeholder();
+    String placeholder() default "";
 }

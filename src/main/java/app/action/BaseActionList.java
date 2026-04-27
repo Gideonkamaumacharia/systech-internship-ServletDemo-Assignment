@@ -1,5 +1,6 @@
 package app.action;
 
+import app.framework.ShowroomFramework;
 import app.framework.ShowroomTable;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
@@ -9,20 +10,26 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BaseActionList<T> extends BaseAction<T>{
+
+
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
        Class<T> entityClass = getType(); //Car.class
-       String listKey = entityClass.getSimpleName().toLowerCase() + "List"; //carList
 
-        ServletContext context = getServletContext();
-        List<T> dataList = (List<T>)context.getAttribute(listKey);//context.getAttribute("carList")
-        if(dataList == null)
-            dataList = new ArrayList<>();
+        HttpSession session = req.getSession();
+        List<T> dataList;
+        try {
+            dataList = returnData(session);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         req.setAttribute("dataList",dataList);//setAttribute("dataList",carList)
 
@@ -32,5 +39,7 @@ public class BaseActionList<T> extends BaseAction<T>{
                 entityClass.getAnnotation(ShowroomTable.class).listJsp() : "list.jsp";
 
         req.getRequestDispatcher(jspName).forward(req,resp);
+
+
 }
 }
