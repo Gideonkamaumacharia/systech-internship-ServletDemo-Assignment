@@ -99,12 +99,13 @@ public class WelcomePage implements Servlet {
         out.println("<p>Precision engineering meets digital control. From the <strong>initial structural blueprints</strong> to <strong>performance configurations</strong> and <strong>showroom delivery</strong>, this portal governs the entire lifecycle of our elite vehicle lineup.</p>");
         out.println("<div class='nav-grid'>");
 
+
+//        out.println("<a href='specs' class='nav-item'>");
+//        out.println("<strong>Technical Specs</strong>");
+//        out.println("</a>");
+
         out.println("<a href='home' class='nav-item'>");
         out.println("<strong>Home Page</strong>");
-        out.println("</a>");
-
-        out.println("<a href='specs' class='nav-item'>");
-        out.println("<strong>Technical Specs</strong>");
         out.println("</a>");
 
         out.println("<a href='car' class='nav-item'>");
@@ -113,6 +114,22 @@ public class WelcomePage implements Servlet {
 
         out.println("<a href='user' class='nav-item'>");
         out.println("<strong>Showroom users</strong>");
+        out.println("</a>");
+//
+//        out.println("<a href='brand' class='nav-item'>");
+//        out.println("<strong>Showroom brands</strong>");
+//        out.println("</a>");
+//
+//        out.println("<a href='category' class='nav-item'>");
+//        out.println("<strong>Category</strong>");
+//        out.println("</a>");
+//
+//        out.println("<a href='showroom' class='nav-item'>");
+//        out.println("<strong>Showrooms</strong>");
+//        out.println("</a>");
+
+        out.println("<a href='applogs' class='nav-item'>");
+        out.println("<strong>System Audit Logs</strong>");
         out.println("</a>");
 
         out.println("</div>");

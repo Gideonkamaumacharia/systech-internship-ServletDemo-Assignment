@@ -1,18 +1,13 @@
 package app.action;
 
-import app.framework.ShowroomFramework;
 import app.framework.ShowroomTable;
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BaseActionList<T> extends BaseAction<T>{
@@ -21,17 +16,18 @@ public class BaseActionList<T> extends BaseAction<T>{
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-       Class<T> entityClass = getType(); //Car.class
+       Class<T> entityClass = getType();
 
-        HttpSession session = req.getSession();
         List<T> dataList;
         try {
-            dataList = returnData(session);
+            dataList = returnData(req);
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
 
-        req.setAttribute("dataList",dataList);//setAttribute("dataList",carList)
+        req.setAttribute("dataList",dataList);
 
         //Go look at this class, find the @ShowroomTable annotation, and hand me the object that represents it.
         //.listJsp -> // Access the value stored inside that specific container

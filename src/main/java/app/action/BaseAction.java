@@ -2,7 +2,8 @@ package app.action;
 
 import app.framework.ShowroomFramework;
 import app.framework.ShowroomTable;
-import app.utility.db.GenericDao;
+import app.dao.GenericDao;
+import app.model.Car;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletConfig;
@@ -91,7 +92,8 @@ public class BaseAction<T> extends HttpServlet {
 
         try {
             T entity = this.serializeForm(req.getParameterMap());
-            dao.insert(this.getType(), entity);
+            handleCreate(entity,req,resp);
+            //dao.insert(this.getType(),entity);
             System.out.println("DAO insert called for: " + entity.getClass().getSimpleName());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -105,6 +107,12 @@ public class BaseAction<T> extends HttpServlet {
         } else {
             resp.sendRedirect("./home");
         }
+    }
+
+    protected void handleCreate(T entity,
+                                HttpServletRequest req,
+                                HttpServletResponse resp) throws ServletException, IOException {
+        throw new UnsupportedOperationException("handleCreate() not implemented");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -188,12 +196,33 @@ public class BaseAction<T> extends HttpServlet {
     }
 
     @SuppressWarnings("unchecked")
-    public List<T> returnData(HttpSession session) throws SQLException {
+    public List<T> returnData(HttpServletRequest req) throws SQLException, NoSuchFieldException {
+        Class<T> entityClass = this.getType();
+        String filterValue = req.getParameter("showroomId");
 
-        System.out.println("DB NAME: " + this.dbName());
+        List<T> data;
 
-        List<T> data = dao.selectAll(this.getType());
-        return (List<T>) data;
+        boolean hasShowroomField = false;
+        try{
+            entityClass.getDeclaredField("showroomId");
+            hasShowroomField= true;
+        } catch(NoSuchFieldException e){
+            hasShowroomField = false;
+        }
+
+        if(hasShowroomField && filterValue != null && !filterValue.isEmpty()){
+            System.out.println("Applying generic filter: showroomId = " + filterValue);
+            data = (List<T>) dao.selectWhere(entityClass,"showroomId",Long.parseLong(filterValue));
+        }else{
+            data = dao.selectAll(entityClass);
+        }
+
+        for (T entity : data) {
+            // Automatically fetch all annotated relationships!
+            dao.populateRelationships(entity);
+        }
+
+        return data;
     }
 
 }

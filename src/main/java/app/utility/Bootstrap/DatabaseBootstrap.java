@@ -1,7 +1,7 @@
 package app.utility.Bootstrap;
 
 import app.model.*;
-import app.utility.db.DatabaseManager;
+import app.utility.db.DataSourceHelper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
@@ -15,14 +15,23 @@ import java.util.Arrays;
 import java.util.List;
 
 @ApplicationScoped
+@InitBootstrap
 public class DatabaseBootstrap implements Bootstrap {
 
     @Inject
+    private DataSourceHelper helper;
+
     private DataSource dataSource;
+
+    private DataSource getDataSource(){
+        if(dataSource == null){
+            dataSource = helper.createDataSource();
+        }
+        return dataSource;
+    }
 
     @Override
     public void process() {
-        System.out.println("Creating database ....");
         List<Class<?>> modelClasses = Arrays.asList(User.class, Car.class, Brand.class, Showroom.class, Category.class,AuditLog.class);
         for(Class<?> clazz: modelClasses){
             try {
@@ -35,13 +44,13 @@ public class DatabaseBootstrap implements Bootstrap {
 
     public void  createTableIfNotExists(Class<?> clazz) throws SQLException {
 
-        try(Connection connection = dataSource.getConnection();
+        try(Connection connection = getDataSource().getConnection();
             Statement statement = connection.createStatement()){
 
             String tableName = clazz.getSimpleName().toLowerCase() + "s";
             Field[] fields = clazz.getDeclaredFields();
 
-            StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (id INT AUTO_INCREMENT PRIMARY KEY");
+            StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (id BIGINT AUTO_INCREMENT PRIMARY KEY");
 
             for(Field field: fields){
                 field.setAccessible(true);

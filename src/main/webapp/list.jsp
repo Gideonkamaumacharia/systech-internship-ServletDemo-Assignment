@@ -36,6 +36,9 @@
             <th>Performance</th>
             <th>Year</th>
             <th>Price</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Showroom</th>
         </tr>
         <c:forEach var="car" items="${dataList}">
             <tr>
@@ -47,6 +50,9 @@
                 <td>${car.performanceLabel}</td>
                 <td>${car.year}</td>
                 <td>${car.price}</td>
+                <td>${car.brand}</td>
+                <td>${car.category}</td>
+                <td>${car.showroom}</td>
                 <td>
                     <c:if test="${carValidator.isExpensive(car)}">
                         <span style="color: red; font-weight: bold;">EXPENSIVE</span>

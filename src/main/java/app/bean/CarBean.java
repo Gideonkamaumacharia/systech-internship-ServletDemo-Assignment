@@ -1,0 +1,67 @@
+package app.bean;
+
+import app.dao.GenericDao;
+import app.model.AuditLog;
+import app.model.Car;
+import app.model.User;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+@Stateless
+public class CarBean {
+
+    @Inject
+    GenericDao dao;
+
+    @Inject
+    private Event<AuditLog> auditLogEvent;
+
+    public void create(Car car, User currentUser){
+        dao.insert(Car.class,car);
+
+        AuditLog log = new AuditLog();
+        log.setActionPerformed("CREATE_CAR");
+        log.setDetails("Added model: " + car.getCarModel() + " to showroom ID : " + car.getShowroomId());
+        log.setTimeStamp(new Date());
+
+        if(currentUser != null){
+            log.setUserId(currentUser.getId());
+        }else {
+            log.setDetails(log.getDetails() + " (Action by Anonymous/System)");
+        }
+
+        auditLogEvent.fire(log);
+        System.out.println("EVENT FIRED: " + log.getActionPerformed());
+
+        System.out.println("CarBean: createCar() called");
+    }
+
+    public List<Car> getCars(String showroomId)  {
+        List<Car> data;
+
+        try {
+            if (showroomId != null && !showroomId.isEmpty()) {
+                System.out.println("EJB filtering: showroomId = " + showroomId);
+                data = dao.selectWhere(Car.class, "showroomId", Long.parseLong(showroomId));
+            } else {
+                data = dao.selectAll(Car.class);
+            }
+
+            for (Car car : data) {
+                dao.populateRelationships(car);
+            }
+
+            return data;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

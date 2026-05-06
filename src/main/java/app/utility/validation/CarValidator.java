@@ -29,6 +29,7 @@ public class CarValidator implements Validate<Car> {
     }
     public boolean isExpensive(Car car) {
         return car != null
+                && car.getPrice() != null
                 && car.getPrice() > 5_000_000;
     }
 }

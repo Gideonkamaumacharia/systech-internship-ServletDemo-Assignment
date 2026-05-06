@@ -23,7 +23,7 @@ public class AppContextListener implements ServletContextListener {
 
     @Inject
     @Any
-    public Instance<Bootstrap> bootstraps;
+    private Instance<Bootstrap> bootstraps;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {

@@ -1,8 +1,12 @@
 package app.action;
 
+import app.bean.CarBean;
+import app.framework.ShowroomTable;
 import app.model.Car;
+import app.model.User;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
+import jakarta.ejb.EJB;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,14 +21,21 @@ public class CarAction extends BaseAction<Car> {
     @ValidatorQualifier(ValidatorQualifier.ValidationType.CAR)
     private Validate<Car> validator;
 
+    @EJB
+    private CarBean carBean;
 
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
+    @Override
+    public void handleCreate(Car car,HttpServletRequest req, HttpServletResponse resp)
+            throws  IOException {
 
-        Car car = serializeForm(req.getParameterMap());
+        User currentUser = (User) req.getSession().getAttribute("activeUser");
 
         if(validator.isValid(car)){
-            super.doPost(req, resp);
+            carBean.create(car,currentUser);
+
+            resp.sendRedirect(car.getClass()
+                    .getAnnotation(ShowroomTable.class)
+                    .tableUrl());
         } else {
             resp.sendRedirect("./car");
         }

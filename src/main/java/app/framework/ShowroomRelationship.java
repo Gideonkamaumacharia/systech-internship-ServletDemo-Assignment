@@ -7,14 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface ShowroomFormField {
-    String label();
-
-    String name()  default "";;
-
-    String placeholder() default "";
-
-    String type() default "text";
-
-    Class<?> source() default Object.class;
+public @interface ShowroomRelationship {
+    // For One-to-Many: The column in the child table (e.g., "showroomId")
+    String mappedBy() default "";
 }
