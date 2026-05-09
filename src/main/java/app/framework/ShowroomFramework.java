@@ -63,13 +63,13 @@ public class ShowroomFramework {
     // Helper to find a "name" or "username" field to show in the dropdown
     private Object getDisplayLabel(Object obj) {
         try {
-            // Try common naming fields
             for (String name : new String[]{"username", "locationName", "carModel"}) {
                 try {
                     Field f = obj.getClass().getDeclaredField(name);
                     f.setAccessible(true);
                     return f.get(obj);
-                } catch (NoSuchFieldException e) { /* continue */ }
+                } catch (NoSuchFieldException e) {
+                }
             }
         } catch (Exception e) { return obj.toString(); }
         return obj.toString();
@@ -82,7 +82,7 @@ public class ShowroomFramework {
             field.setAccessible(true);
             return field.get(obj);
         } catch (Exception e) {
-            return "N/A"; // Fallback if field doesn't exist
+            return "N/A";
         }
     }
 

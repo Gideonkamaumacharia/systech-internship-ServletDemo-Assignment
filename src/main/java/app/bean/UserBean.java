@@ -3,7 +3,10 @@ package app.bean;
 import app.dao.GenericDao;
 import app.model.AuditLog;
 import app.model.Car;
+import app.model.Showroom;
 import app.model.User;
+import app.utility.validation.Validate;
+import app.utility.validation.ValidatorQualifier;
 import jakarta.ejb.Stateless;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
@@ -19,16 +22,22 @@ import java.util.List;
 public class UserBean {
 
     @Inject
+    @ValidatorQualifier(ValidatorQualifier.ValidationType.USER)
+    private Validate<User> validator;
+
+    @Inject
     GenericDao dao;
 
     @Inject
     private Event<AuditLog> auditLogEvent;
 
-//    @ApplicationScoped
-//    @Inject
-//    AuditLog log;
 
     public void create(User user){
+
+        if(!validator.isValid(user)){
+            throw new IllegalArgumentException("Invalid car data");
+        }
+
         dao.insert(User.class,user);
 
         AuditLog log = new AuditLog();

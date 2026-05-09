@@ -17,7 +17,7 @@ import java.util.List;
 
 
 @WebServlet("/list")
-public class CarList extends BaseActionList<Car> {
+public class CarList extends BaseAction<Car> {
 
     @EJB
     CarBean carBean;
@@ -34,7 +34,7 @@ public class CarList extends BaseActionList<Car> {
 
         String jspName = getType().isAnnotationPresent(ShowroomTable.class)?
                 getType().getAnnotation(ShowroomTable.class).listJsp() : "list.jsp";
-
+//Car.class
         req.getRequestDispatcher(jspName).forward(req,resp);
     }
 

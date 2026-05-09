@@ -1,17 +1,27 @@
 package app.bean;
 
+import app.messaging.EmailQueueProducer;
 import app.model.AuditLog;
-import jakarta.ejb.Singleton;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 
-@Singleton
+import jakarta.inject.Inject;
+import jakarta.mail.*;
+
+@ApplicationScoped
 public class EmailNotificationBean {
+
+
+    @Inject
+    private EmailQueueProducer producer;
+
 
     public void onAuditLog(@Observes AuditLog auditLog) {
 
-        String recipient = "admin@showroom.com";
-        String subject = "System Alert: " + auditLog.getActionPerformed();
+        producer.queueEmail(auditLog);
 
-        System.out.println("Email queued for " + recipient);
+        System.out.println("Audit event queued for email processing");
+
     }
+
 }

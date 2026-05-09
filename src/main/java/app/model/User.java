@@ -24,7 +24,7 @@ public class User implements Serializable {
 
     @ShowroomFormField(label = "Role", placeholder = "Role")
     @ShowroomTableCol(label = "Role")
-    private String role; // e.g., "ADMIN", "SALES"
+    private String role;
 
     //many logs to one user
     private List<AuditLog> logs;

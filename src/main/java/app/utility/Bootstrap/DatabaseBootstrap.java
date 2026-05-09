@@ -21,14 +21,6 @@ public class DatabaseBootstrap implements Bootstrap {
     @Inject
     private DataSourceHelper helper;
 
-    private DataSource dataSource;
-
-    private DataSource getDataSource(){
-        if(dataSource == null){
-            dataSource = helper.createDataSource();
-        }
-        return dataSource;
-    }
 
     @Override
     public void process() {
@@ -44,7 +36,7 @@ public class DatabaseBootstrap implements Bootstrap {
 
     public void  createTableIfNotExists(Class<?> clazz) throws SQLException {
 
-        try(Connection connection = getDataSource().getConnection();
+        try(Connection connection = helper.getConnection();
             Statement statement = connection.createStatement()){
 
             String tableName = clazz.getSimpleName().toLowerCase() + "s";

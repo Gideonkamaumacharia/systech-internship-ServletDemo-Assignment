@@ -1,7 +1,9 @@
 package app.action;
 
-import app.model.Car;
+import app.bean.ShowroomBean;
+import app.framework.ShowroomTable;
 import app.model.Showroom;
+import app.model.User;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
 import jakarta.inject.Inject;
@@ -16,18 +18,20 @@ import java.io.IOException;
 public class ShowroomAction extends BaseAction<Showroom> {
 
     @Inject
-    @ValidatorQualifier(ValidatorQualifier.ValidationType.SHOWROOM)
-    private Validate<Showroom> validator;
+    ShowroomBean showroomBean;
 
-
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
+    public void handleCreate(Showroom showroom,HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Showroom showroom = serializeForm(req.getParameterMap());
+        User currentUser = (User)req.getSession().getAttribute("activeUser");
 
-        if(validator.isValid(showroom)){
-            super.doPost(req, resp);
-        } else {
+        try{
+            showroomBean.createShowroom(showroom,currentUser);
+
+            resp.sendRedirect(showroom.getClass()
+                    .getAnnotation(ShowroomTable.class)
+                    .tableUrl());
+        } catch(IllegalArgumentException e) {
             resp.sendRedirect("./showroom");
         }
 

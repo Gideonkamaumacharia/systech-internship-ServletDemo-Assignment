@@ -15,11 +15,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+//Defines business behaviour
 @WebServlet("/car")
 public class CarAction extends BaseAction<Car> {
-    @Inject
-    @ValidatorQualifier(ValidatorQualifier.ValidationType.CAR)
-    private Validate<Car> validator;
 
     @EJB
     private CarBean carBean;
@@ -30,13 +28,13 @@ public class CarAction extends BaseAction<Car> {
 
         User currentUser = (User) req.getSession().getAttribute("activeUser");
 
-        if(validator.isValid(car)){
+        try{
             carBean.create(car,currentUser);
 
             resp.sendRedirect(car.getClass()
                     .getAnnotation(ShowroomTable.class)
                     .tableUrl());
-        } else {
+        } catch (IllegalArgumentException e){
             resp.sendRedirect("./car");
         }
 

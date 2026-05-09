@@ -21,21 +21,13 @@ public class GenericDao {
     @Inject
     private DataSourceHelper helper;
 
-    private DataSource dataSource;
-
-    private DataSource getDataSource() {
-        if (dataSource == null) {
-            dataSource = helper.createDataSource();
-        }
-        return dataSource;
-    }
 
     @Inject
     ShowroomFramework showroomFramework;
 
     public void insert(Class<?> clazz, Object entity) {
 
-        try (Connection connection = getDataSource().getConnection()) {
+        try (Connection connection = helper.getConnection()) {
 
             String tableName = clazz.getSimpleName().toLowerCase() + "s";
             Field[] fields = clazz.getDeclaredFields();
@@ -110,7 +102,7 @@ public class GenericDao {
         String tableName = clazz.getSimpleName().toLowerCase() + "s";
         String sql = "SELECT * FROM " + tableName;
 
-        try (Connection connection = getDataSource().getConnection();
+        try (Connection connection = helper.getConnection();
              Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -162,7 +154,7 @@ public class GenericDao {
         String tableName = clazz.getSimpleName().toLowerCase() + "s";
         String sql = "SELECT * FROM " + tableName + " WHERE id = ?";
 
-        try (Connection connection = getDataSource().getConnection();
+        try (Connection connection = helper.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setLong(1, id);
@@ -199,7 +191,7 @@ public class GenericDao {
         String tableName = clazz.getSimpleName().toLowerCase() + "s";
         String sql = "SELECT * FROM " + tableName + " WHERE " + column + " = ?";
 
-        try (Connection connection = getDataSource().getConnection();
+        try (Connection connection = helper.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
             ps.setObject(1, value);
@@ -261,7 +253,7 @@ public class GenericDao {
 
                 try {
                     // CASE 1: It's a List (One-to-Many)
-                    if (field.getType() == List.class) {
+                    if (field.getType() == List.class) {//List<?>
                         // Get the generic type of the list (e.g., Car.class)
                         ParameterizedType listType = (ParameterizedType) field.getGenericType();//List<Car>
                         Class<?> childClass = (Class<?>) listType.getActualTypeArguments()[0];//Car.class

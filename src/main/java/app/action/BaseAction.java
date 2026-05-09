@@ -31,11 +31,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+//Defines flow
 public class BaseAction<T> extends HttpServlet {
-
-    @ApplicationScoped
-    @Inject
-    GenericDao dao;
 
     @ApplicationScoped
     @Inject
@@ -88,7 +85,6 @@ public class BaseAction<T> extends HttpServlet {
 
     @SuppressWarnings("unchecked")
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //if session exist, use it, otherwise create a new one
 
         try {
             T entity = this.serializeForm(req.getParameterMap());
@@ -101,8 +97,7 @@ public class BaseAction<T> extends HttpServlet {
 
         if (this.getType().isAnnotationPresent(ShowroomTable.class)) {
             resp.sendRedirect(this.getType()
-                    .getAnnotation(ShowroomTable.class).tableUrl());//redirect to tableUrl
-            //for car-> list (which is CarList)
+                    .getAnnotation(ShowroomTable.class).tableUrl());
 
         } else {
             resp.sendRedirect("./home");
@@ -116,7 +111,7 @@ public class BaseAction<T> extends HttpServlet {
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException{
+            throws ServletException, IOException {
 
         //if session exist, use it, otherwise create a new one
         HttpSession session = req.getSession();
@@ -127,10 +122,13 @@ public class BaseAction<T> extends HttpServlet {
         resp.setDateHeader("Expires",0);
 
         if (session == null || session.getAttribute("userAuthenticated") == null) {
+
             // Not logged in! Send them back to the gate
             HttpServletResponse httpResp = resp;
+
             String path = req.getServletPath(); //use the request to get the path
             String dest = path.substring(1);//strip the /
+
             resp.sendRedirect("login?dest=" + dest);
             return;
         }
@@ -138,51 +136,276 @@ public class BaseAction<T> extends HttpServlet {
         ServletConfig config = getServletConfig();
 
         Class<T> clazz = getType();
+
         ShowroomTable table = clazz.getAnnotation(ShowroomTable.class);
 
         PrintWriter writer = resp.getWriter();
+
         writer.println("<!DOCTYPE html>");
         writer.println("<html>");
+
         writer.println("<head>");
+
+        writer.println("<meta charset='UTF-8'>");
+        writer.println("<meta name='viewport' content='width=device-width, initial-scale=1.0'>");
+
         writer.println("<title>");
         writer.println(config.getInitParameter("pageName"));
         writer.println("</title>");
+
+        writer.println("<link href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>");
+
         writer.println("<style>");
-        writer.println("body { font-family: Arial; margin: 40px; background-color: #f4f6f8; }");
-        writer.println("header { background-color: #2c3e50; color: white; padding: 15px; }");
-        writer.println("section { margin-top: 20px; padding: 20px; background: white; border-radius: 5px; max-width: 400px; }");
-        writer.println("input { width: 100%; padding: 8px; margin: 10px 0; }");
-        writer.println("button { padding: 10px; background-color: #3498db; color: white; border: none; width: 100%; }");
-        writer.println("a { display: inline-block; margin-top: 10px; color: #3498db; }");
+
+        writer.println("* {");
+        writer.println("margin: 0;");
+        writer.println("padding: 0;");
+        writer.println("box-sizing: border-box;");
+        writer.println("}");
+
+        writer.println("body {");
+        writer.println("font-family: 'Inter', sans-serif;");
+        writer.println("background: #0f172a;");
+        writer.println("color: #e2e8f0;");
+        writer.println("min-height: 100vh;");
+        writer.println("padding: 40px 20px;");
+        writer.println("}");
+
+        /* PAGE WRAPPER */
+        writer.println(".page-wrapper {");
+        writer.println("max-width: 1200px;");
+        writer.println("margin: auto;");
+        writer.println("}");
+
+        /* HEADER */
+        writer.println("header {");
+        writer.println("background: linear-gradient(145deg, #1e293b, #111827);");
+        writer.println("padding: 30px;");
+        writer.println("border-radius: 24px;");
+        writer.println("margin-bottom: 35px;");
+        writer.println("border: 1px solid rgba(255,255,255,0.08);");
+        writer.println("box-shadow: 0 15px 40px rgba(0,0,0,0.35);");
+        writer.println("}");
+
+        writer.println(".header-content {");
+        writer.println("display: flex;");
+        writer.println("justify-content: space-between;");
+        writer.println("align-items: center;");
+        writer.println("flex-wrap: wrap;");
+        writer.println("gap: 20px;");
+        writer.println("}");
+
+        writer.println(".header-title h1 {");
+        writer.println("font-size: 2rem;");
+        writer.println("color: #ffffff;");
+        writer.println("margin-bottom: 8px;");
+        writer.println("}");
+
+        writer.println(".header-title p {");
+        writer.println("color: #94a3b8;");
+        writer.println("font-size: 0.95rem;");
+        writer.println("}");
+
+        writer.println(".user-badge {");
+        writer.println("background: rgba(56, 189, 248, 0.12);");
+        writer.println("border: 1px solid rgba(56, 189, 248, 0.25);");
+        writer.println("padding: 12px 18px;");
+        writer.println("border-radius: 14px;");
+        writer.println("color: #cbd5e1;");
+        writer.println("font-size: 0.95rem;");
+        writer.println("}");
+
+        writer.println(".user-badge strong {");
+        writer.println("color: #ffffff;");
+        writer.println("}");
+
+        /* FORM CONTAINER */
+        writer.println("section {");
+        writer.println("background: rgba(15, 23, 42, 0.85);");
+        writer.println("backdrop-filter: blur(12px);");
+        writer.println("padding: 40px;");
+        writer.println("border-radius: 24px;");
+        writer.println("border: 1px solid rgba(255,255,255,0.08);");
+        writer.println("box-shadow: 0 20px 50px rgba(0,0,0,0.4);");
+        writer.println("margin-bottom: 30px;");
+        writer.println("}");
+
+        /* FORM ELEMENTS */
+        writer.println("form {");
+        writer.println("width: 100%;");
+        writer.println("}");
+
+        writer.println("label {");
+        writer.println("display: block;");
+        writer.println("margin-bottom: 6px;");
+        writer.println("font-size: 0.85rem;");
+        writer.println("font-weight: 500;");
+        writer.println("color: #cbd5e1;");
+        writer.println("}");
+
+        writer.println("input, select, textarea {");
+        writer.println("width: 100%;");
+        writer.println("padding: 10px 12px;");
+        writer.println("margin-bottom: 16px;");
+        writer.println("border-radius: 10px;");
+        writer.println("border: 1px solid rgba(255,255,255,0.08);");
+        writer.println("background: #1e293b;");
+        writer.println("color: #ffffff;");
+        writer.println("font-size: 0.88rem;");
+        writer.println("min-height: 42px;");
+        writer.println("outline: none;");
+        writer.println("transition: all 0.3s ease;");
+        writer.println("}");
+
+        writer.println("input:focus, select:focus, textarea:focus {");
+        writer.println("border-color: #38bdf8;");
+        writer.println("box-shadow: 0 0 0 4px rgba(56,189,248,0.15);");
+        writer.println("}");
+
+        writer.println("button, input[type='submit'] {");
+        writer.println("background: linear-gradient(to right, #38bdf8, #6366f1);");
+        writer.println("color: white;");
+        writer.println("border: none;");
+        writer.println("padding: 14px 24px;");
+        writer.println("border-radius: 14px;");
+        writer.println("font-size: 0.95rem;");
+        writer.println("font-weight: 600;");
+        writer.println("cursor: pointer;");
+        writer.println("transition: all 0.3s ease;");
+        writer.println("}");
+
+        writer.println("button:hover, input[type='submit']:hover {");
+        writer.println("transform: translateY(-2px);");
+        writer.println("box-shadow: 0 10px 25px rgba(99,102,241,0.35);");
+        writer.println("}");
+
+        /* NAVIGATION LINKS */
+        writer.println(".nav-link {");
+        writer.println("display: inline-block;");
+        writer.println("margin-top: 15px;");
+        writer.println("padding: 14px 22px;");
+        writer.println("background: linear-gradient(145deg, #1e293b, #111827);");
+        writer.println("color: #ffffff;");
+        writer.println("text-decoration: none;");
+        writer.println("border-radius: 14px;");
+        writer.println("border: 1px solid rgba(255,255,255,0.08);");
+        writer.println("transition: all 0.3s ease;");
+        writer.println("}");
+
+        writer.println(".nav-link:hover {");
+        writer.println("transform: translateY(-3px);");
+        writer.println("border-color: rgba(56,189,248,0.35);");
+        writer.println("box-shadow: 0 12px 25px rgba(0,0,0,0.3);");
+        writer.println("}");
+
+        /* FOOTER NAV */
+        writer.println(".footer-nav {");
+        writer.println("margin-top: 35px;");
+        writer.println("display: flex;");
+        writer.println("justify-content: space-between;");
+        writer.println("align-items: center;");
+        writer.println("flex-wrap: wrap;");
+        writer.println("gap: 15px;");
+        writer.println("}");
+
+        writer.println(".back-btn {");
+        writer.println("display: inline-block;");
+        writer.println("padding: 14px 22px;");
+        writer.println("background: rgba(255,255,255,0.05);");
+        writer.println("border: 1px solid rgba(255,255,255,0.08);");
+        writer.println("border-radius: 14px;");
+        writer.println("text-decoration: none;");
+        writer.println("color: #e2e8f0;");
+        writer.println("transition: all 0.3s ease;");
+        writer.println("}");
+
+        writer.println(".back-btn:hover {");
+        writer.println("background: rgba(255,255,255,0.08);");
+        writer.println("transform: translateY(-2px);");
+        writer.println("}");
+
+        /* RESPONSIVE */
+        writer.println("@media(max-width: 768px) {");
+
+        writer.println("header {");
+        writer.println("padding: 24px;");
+        writer.println("}");
+
+        writer.println(".header-title h1 {");
+        writer.println("font-size: 1.5rem;");
+        writer.println("}");
+
+        writer.println("section {");
+        writer.println("padding: 25px;");
+        writer.println("}");
+
+        writer.println(".footer-nav {");
+        writer.println("flex-direction: column;");
+        writer.println("align-items: flex-start;");
+        writer.println("}");
+
+        writer.println("}");
+
         writer.println("</style>");
+
         writer.println("</head>");
 
         writer.println("<body>");
 
-// Header
+        writer.println("<div class='page-wrapper'>");
+
+        // HEADER
         writer.println("<header>");
+
+        writer.println("<div class='header-content'>");
+
+        writer.println("<div class='header-title'>");
         writer.println("<h1>");
         writer.println(config.getInitParameter("pageHeader"));
-        writer.print("Logged In User: ");
-        writer.println(session.getAttribute("UserActualName"));
         writer.println("</h1>");
+        writer.println("<p>Enterprise Showroom Management Portal</p>");
+        writer.println("</div>");
+
+        writer.println("<div class='user-badge'>");
+        writer.println("Logged in as <strong>");
+        writer.println(session.getAttribute("UserActualName"));
+        writer.println("</strong>");
+        writer.println("</div>");
+
+        writer.println("</div>");
+
         writer.println("</header>");
 
-// Form
+        // FORM SECTION
         writer.println("<section>");
-        showroomFramework.htmlForm(writer, this.getType());
-        writer.println("</section>");
-        writer.println("<a href=\"" + table.tableUrl() + "\" class=\"nav-link\">View Registered " + table.label() + "</a>");
 
+        showroomFramework.htmlForm(writer, this.getType());
+
+        writer.println("</section>");
+
+        // VIEW REGISTERED LINK
+        writer.println("<a href=\"" + table.tableUrl() + "\" class=\"nav-link\">");
+        writer.println("View Registered " + table.label());
+        writer.println("</a>");
+
+        // FOOTER NAV
         writer.println("<div class='footer-nav'>");
-        writer.println("<a href='home' class='back-btn'>&larr; Return to Dashboard</a>");
-        writer.println("<span style='font-size: 12px; color: #ccc;'>v1.0.4-STABLE</span>");
+
+        writer.println("<a href='home' class='back-btn'>");
+        writer.println("&larr; Return to Dashboard");
+        writer.println("</a>");
+
+        writer.println("<span style='font-size: 12px; color: #64748b;'>");
+        writer.println("v1.0.4-STABLE");
+        writer.println("</span>");
+
         writer.println("</div>");
+
+        writer.println("</div>");
+
         writer.println("</body>");
         writer.println("</html>");
-
     }
-
     @SuppressWarnings("unchecked")
     public Class<T> getType() { //Returns the actual entity class eg Person.class
         ParameterizedType superClass =
@@ -195,34 +418,6 @@ public class BaseAction<T> extends HttpServlet {
         return this.getType().getSimpleName() + "_DB";
     }
 
-    @SuppressWarnings("unchecked")
-    public List<T> returnData(HttpServletRequest req) throws SQLException, NoSuchFieldException {
-        Class<T> entityClass = this.getType();
-        String filterValue = req.getParameter("showroomId");
 
-        List<T> data;
-
-        boolean hasShowroomField = false;
-        try{
-            entityClass.getDeclaredField("showroomId");
-            hasShowroomField= true;
-        } catch(NoSuchFieldException e){
-            hasShowroomField = false;
-        }
-
-        if(hasShowroomField && filterValue != null && !filterValue.isEmpty()){
-            System.out.println("Applying generic filter: showroomId = " + filterValue);
-            data = (List<T>) dao.selectWhere(entityClass,"showroomId",Long.parseLong(filterValue));
-        }else{
-            data = dao.selectAll(entityClass);
-        }
-
-        for (T entity : data) {
-            // Automatically fetch all annotated relationships!
-            dao.populateRelationships(entity);
-        }
-
-        return data;
-    }
 
 }

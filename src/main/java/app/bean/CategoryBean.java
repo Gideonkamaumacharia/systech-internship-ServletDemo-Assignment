@@ -1,0 +1,67 @@
+package app.bean;
+
+import app.dao.GenericDao;
+import app.model.AuditLog;
+import app.model.Category;
+import app.model.Showroom;
+import app.model.User;
+import app.utility.validation.Validate;
+import app.utility.validation.ValidatorQualifier;
+import jakarta.ejb.Stateless;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+
+import java.util.Date;
+import java.util.List;
+
+
+@Stateless
+public class CategoryBean {
+
+    @Inject
+    @ValidatorQualifier(ValidatorQualifier.ValidationType.CATEGORY)
+    private Validate<Category> validator;
+
+    @Inject
+    GenericDao dao;
+
+    @Inject
+    private Event<AuditLog> auditLogEvent;
+
+
+    public void createCategory(Category category, User currentUser){
+
+        if(!validator.isValid(category)){
+            throw new IllegalArgumentException("Invalid category data");
+        }
+
+        dao.insert(Category.class,category);
+
+        AuditLog log = new AuditLog();
+        log.setActionPerformed("CREATE_BRAND");
+        log.setDetails("Added brand: " + category.getName() + " from : " + category.getDescription());
+        log.setTimeStamp(new Date());
+
+        if(currentUser != null){
+            log.setUserId(currentUser.getId());
+        }else {
+            log.setDetails(log.getDetails() + " (Action by Anonymous/System)");
+        }
+
+        auditLogEvent.fire(log);
+
+        System.out.println("EVENT FIRED: " + log.getActionPerformed());
+        System.out.println("CategoryBean: createBean() called");
+
+    }
+
+    public List<Category> getCategories(){
+        List<Category> categories = dao.selectAll(Category.class);
+
+        for(Category category : categories){
+            dao.populateRelationships(category);
+        }
+
+        return categories;
+    }
+}

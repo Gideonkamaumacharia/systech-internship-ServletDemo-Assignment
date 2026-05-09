@@ -4,18 +4,23 @@ import app.dao.GenericDao;
 import app.model.AuditLog;
 import app.model.Car;
 import app.model.User;
+import app.utility.validation.Validate;
+import app.utility.validation.ValidatorQualifier;
 import jakarta.ejb.Stateless;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Stateless
 public class CarBean {
+
+    @Inject
+    @ValidatorQualifier(ValidatorQualifier.ValidationType.CAR)
+    private Validate<Car> validator;
 
     @Inject
     GenericDao dao;
@@ -24,11 +29,16 @@ public class CarBean {
     private Event<AuditLog> auditLogEvent;
 
     public void create(Car car, User currentUser){
+
+        if(!validator.isValid(car)){
+            throw new IllegalArgumentException("Invalid car data");//unchecked exception will automatically trigger a rollback
+        }
+
         dao.insert(Car.class,car);
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("CREATE_CAR");
-        log.setDetails("Added model: " + car.getCarModel() + " to showroom ID : " + car.getShowroomId());
+        log.setDetails("Added model: " + car.getCarModel() + " to showroom ID : " + car.getShowroom());
         log.setTimeStamp(new Date());
 
         if(currentUser != null){
@@ -65,3 +75,8 @@ public class CarBean {
         }
     }
 }
+//1. Validate
+//2. Insert Car
+//3. Fire Audit Event
+//That IS a transactional workflow.
+//Suppose one fails -> EJB transaction behavior: will ROLLBACK EVERYTHING

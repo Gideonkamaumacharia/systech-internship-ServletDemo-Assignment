@@ -1,7 +1,10 @@
 package app.action;
 
+import app.bean.CategoryBean;
+import app.framework.ShowroomTable;
 import app.model.Brand;
 import app.model.Category;
+import app.model.User;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
 import jakarta.inject.Inject;
@@ -15,19 +18,22 @@ import java.io.IOException;
 @WebServlet("/category")
 public class CategoryAction extends BaseAction<Category>{
 
+
     @Inject
-    @ValidatorQualifier(ValidatorQualifier.ValidationType.CATEGORY)
-    private Validate<Category> validator;
+    CategoryBean categoryBean;
 
-
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
+    public void handleCreate(Category category,HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Category category = serializeForm(req.getParameterMap());
+    User currentUser = (User)req.getSession().getAttribute("activeUser");
 
-        if(validator.isValid(category)){
-            super.doPost(req, resp);
-        } else {
+        try{
+            categoryBean.createCategory(category,currentUser);
+
+            resp.sendRedirect(category.getClass()
+                                        .getAnnotation(ShowroomTable.class)
+                                        .tableUrl());
+        } catch(IllegalArgumentException e) {
             resp.sendRedirect("./category");
         }
 

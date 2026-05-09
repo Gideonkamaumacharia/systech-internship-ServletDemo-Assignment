@@ -21,10 +21,6 @@ import java.io.IOException;
 
 @WebServlet("/user")
 public class UserAction extends BaseAction<User> {
-    @Inject
-    @ApplicationScoped
-    @ValidatorQualifier(ValidatorQualifier.ValidationType.USER)
-    private Validate<User> validator;
 
     @EJB
     UserBean userBean;
@@ -36,13 +32,13 @@ public class UserAction extends BaseAction<User> {
 
         //User currentUser = (User) req.getSession().getAttribute("activeUser");
 
-        if(validator.isValid(user)){
+        try{
             userBean.create(user);
 
             resp.sendRedirect(user.getClass()
                     .getAnnotation(ShowroomTable.class)
                     .tableUrl());
-        } else {
+        } catch(IllegalArgumentException e) {
             resp.sendRedirect("./user");
         }
 

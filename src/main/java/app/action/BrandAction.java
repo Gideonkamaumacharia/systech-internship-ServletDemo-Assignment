@@ -1,8 +1,12 @@
 package app.action;
 
+import app.bean.BrandBean;
+import app.framework.ShowroomTable;
 import app.model.Brand;
+import app.model.User;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
+import jakarta.ejb.EJB;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
@@ -14,19 +18,26 @@ import java.io.IOException;
 
 @WebServlet("/brand")
 public class BrandAction extends BaseAction<Brand>{
-    @Inject
-    @ValidatorQualifier(ValidatorQualifier.ValidationType.BRAND)
-    private Validate<Brand> validator;
+
+    @EJB
+    BrandBean brandBean;
 
 
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
+    public void handleCreate(Brand brand,
+                             HttpServletRequest req,
+                             HttpServletResponse resp)
             throws ServletException, IOException {
 
-        Brand brand = serializeForm(req.getParameterMap());
+        User currentUser = (User) req.getSession().getAttribute("activeUser");
 
-        if(validator.isValid(brand)){
-            super.doPost(req, resp);
-        } else {
+        try{
+           brandBean.create(brand,currentUser);
+
+            resp.sendRedirect(brand.getClass()
+                    .getAnnotation(ShowroomTable.class)
+                    .tableUrl());
+
+        } catch(IllegalArgumentException e) {
             resp.sendRedirect("./brand");
         }
 

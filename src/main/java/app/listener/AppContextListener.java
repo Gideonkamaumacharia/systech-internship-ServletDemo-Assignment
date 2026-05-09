@@ -3,8 +3,6 @@ package app.listener;
 
 import app.model.*;
 import app.utility.Bootstrap.Bootstrap;
-import app.utility.db.DatabaseManager;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
@@ -12,11 +10,9 @@ import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
 
-import javax.sql.DataSource;
-import java.lang.reflect.Field;
+
 import java.sql.*;
-import java.util.Arrays;
-import java.util.List;
+
 
 @WebListener
 public class AppContextListener implements ServletContextListener {
