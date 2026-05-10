@@ -31,7 +31,7 @@ public class CarBean {
     public void create(Car car, User currentUser){
 
         if(!validator.isValid(car)){
-            throw new IllegalArgumentException("Invalid car data");//unchecked exception will automatically trigger a rollback
+            throw new IllegalArgumentException("Invalid car data");
         }
 
         dao.insert(Car.class,car);
@@ -75,8 +75,23 @@ public class CarBean {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 //1. Validate
 //2. Insert Car
 //3. Fire Audit Event
 //That IS a transactional workflow.
 //Suppose one fails -> EJB transaction behavior: will ROLLBACK EVERYTHING
+
+//unchecked exception will automatically trigger a rollback

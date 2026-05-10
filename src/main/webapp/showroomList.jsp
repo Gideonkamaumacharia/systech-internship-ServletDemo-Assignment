@@ -217,6 +217,6 @@
 </div>
 
 <a href="./showroom" class="bottom-link">+ Add New Branch</a>
-
+<a href="home" class="add-link">Back to Dashboard</a>
 </body>
 </html>

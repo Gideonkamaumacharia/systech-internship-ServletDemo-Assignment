@@ -4,11 +4,8 @@ import app.bean.CarBean;
 import app.framework.ShowroomTable;
 import app.model.Car;
 import app.model.User;
-import app.utility.validation.Validate;
-import app.utility.validation.ValidatorQualifier;
 import jakarta.ejb.EJB;
-import jakarta.inject.Inject;
-import jakarta.servlet.ServletException;
+
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

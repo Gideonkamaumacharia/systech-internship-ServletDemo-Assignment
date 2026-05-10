@@ -34,7 +34,7 @@ public class CarList extends BaseAction<Car> {
 
         String jspName = getType().isAnnotationPresent(ShowroomTable.class)?
                 getType().getAnnotation(ShowroomTable.class).listJsp() : "list.jsp";
-//Car.class
+
         req.getRequestDispatcher(jspName).forward(req,resp);
     }
 

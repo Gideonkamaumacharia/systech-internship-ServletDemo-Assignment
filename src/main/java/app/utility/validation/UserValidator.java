@@ -5,7 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-@Named("userBean")
+@Named("userValidator")
 @ApplicationScoped
 @ValidatorQualifier(ValidatorQualifier.ValidationType.USER)
 public class UserValidator implements Validate<User> {

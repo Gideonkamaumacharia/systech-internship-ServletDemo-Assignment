@@ -89,8 +89,6 @@ public class EmailWorker implements MessageListener {
         try {
 
             jakarta.mail.Message emailMessage = new jakarta.mail.internet.MimeMessage(session);
-
-
             emailMessage.setFrom(
                     new InternetAddress(fromEmail)
             );

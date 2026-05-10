@@ -157,17 +157,15 @@
 
             <tr>
                 <th>Name</th>
-                <th>Password</th>
                 <th>Role</th>
             </tr>
 
             <c:forEach var="user" items="${dataList}">
                 <tr>
                     <td>${user.username}</td>
-                    <td>${user.password}</td>
 
                     <td>
-                        <c:if test="${userBean.isAdmin(user)}">
+                        <c:if test="${userValidator.isAdmin(user)}">
                             <span class="badge-admin">ADMIN</span>
                         </c:if>
                     </td>

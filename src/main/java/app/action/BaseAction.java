@@ -361,7 +361,6 @@ public class BaseAction<T> extends HttpServlet {
 
         writer.println("<div class='header-title'>");
         writer.println("<h1>");
-        writer.println(config.getInitParameter("pageHeader"));
         writer.println("</h1>");
         writer.println("<p>Enterprise Showroom Management Portal</p>");
         writer.println("</div>");
@@ -414,9 +413,6 @@ public class BaseAction<T> extends HttpServlet {
         return (Class<T>) superClass.getActualTypeArguments()[0];
     }
 
-    public String dbName(){
-        return this.getType().getSimpleName() + "_DB";
-    }
 
 
 

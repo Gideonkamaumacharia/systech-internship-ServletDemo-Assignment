@@ -160,7 +160,6 @@
     </c:if>
 
     <table>
-
         <tr>
             <th>Model</th>
             <th>Engine Specification</th>
@@ -204,7 +203,7 @@
 
     <c:choose>
 
-        <c:when test="${dataList.size() gt 5}">
+        <c:when test="${dataList.size() gt 30}">
             <div class="message danger">
                 The showroom is getting crowded!
             </div>
@@ -226,7 +225,7 @@
 
     <div class="navigation">
         <a href="car" class="nav-link">&larr; Register New Vehicle</a>
-        <a href="list" class="nav-link">View Registered Cars</a>
+        <a href="home" class="add-link">Back to Dashboard</a>
     </div>
 
 </div>

@@ -194,7 +194,7 @@
     </div>
 
     <a href="./category" class="back">&larr; Back to Dashboard</a>
-
+    <a href="home" class="add-link">Back to Dashboard</a>
 </div>
 
 </body>

@@ -23,6 +23,11 @@ public class ShowroomList extends BaseAction<Showroom> {
         List<Showroom> dataList = showroomBean.getShowrooms();
 
         req.setAttribute("dataList",dataList);
+//        for (Showroom s : dataList) {
+//            System.out.println("Showroom: " + s.getLocationName());
+//            System.out.println("ManagerId: " + s.getManagerId());
+//            System.out.println("Manager Object: " + s.getManager());
+//        }
 
         String jspName = Showroom.class.isAnnotationPresent(ShowroomTable.class) ?
                 Showroom.class.getAnnotation(ShowroomTable.class).listJsp() : "list.jsp";
