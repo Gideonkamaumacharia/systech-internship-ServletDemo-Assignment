@@ -38,8 +38,8 @@ public class CategoryBean {
         dao.insert(Category.class,category);
 
         AuditLog log = new AuditLog();
-        log.setActionPerformed("CREATE_BRAND");
-        log.setDetails("Added brand: " + category.getName() + " from : " + category.getDescription());
+        log.setActionPerformed("CREATE_CATEGORY");
+        log.setDetails("Added Category: " + category.getName() + " from : " + category.getDescription());
         log.setTimeStamp(new Date());
 
         if(currentUser != null){

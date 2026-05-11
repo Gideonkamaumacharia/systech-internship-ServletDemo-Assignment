@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/showroom_list")
@@ -20,7 +21,12 @@ public class ShowroomList extends BaseAction<Showroom> {
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        List<Showroom> dataList = showroomBean.getShowrooms();
+        List<Showroom> dataList = null;
+        try {
+            dataList = showroomBean.getShowrooms();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         req.setAttribute("dataList",dataList);
 //        for (Showroom s : dataList) {

@@ -1,9 +1,7 @@
 package app.bean;
 
 import app.dao.GenericDao;
-import app.model.AuditLog;
-import app.model.Car;
-import app.model.User;
+import app.model.*;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
 import jakarta.ejb.Stateless;
@@ -38,7 +36,7 @@ public class CarBean {
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("CREATE_CAR");
-        log.setDetails("Added model: " + car.getCarModel() + " to showroom ID : " + car.getShowroom());
+        log.setDetails("Added model: " + car.getCarModel() + " to showroom ID : " + car.getShowroomId());
         log.setTimeStamp(new Date());
 
         if(currentUser != null){
@@ -52,6 +50,35 @@ public class CarBean {
 
         System.out.println("CarBean: createCar() called");
     }
+
+//    private void populateRelationships(Car car) {
+//
+//        if (car.getBrandId() != null) {
+//
+//            Brand brand =
+//                    dao.selectById(Brand.class, car.getBrandId());
+//
+//            car.setBrand(brand);
+//        }
+//
+//        if (car.getCategoryId() != null) {
+//
+//            Category category =
+//                    dao.selectById(Category.class,
+//                            car.getCategoryId());
+//
+//            car.setCategory(category);
+//        }
+//
+//        if (car.getShowroomId() != null) {
+//
+//            Showroom showroom =
+//                    dao.selectById(Showroom.class,
+//                            car.getShowroomId());
+//
+//            car.setShowroom(showroom);
+//        }
+//    }
 
     public List<Car> getCars(String showroomId)  {
         List<Car> data;

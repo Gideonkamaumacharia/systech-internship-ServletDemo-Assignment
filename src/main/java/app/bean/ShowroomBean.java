@@ -2,6 +2,7 @@ package app.bean;
 
 import app.dao.GenericDao;
 import app.model.AuditLog;
+import app.model.Car;
 import app.model.Showroom;
 import app.model.User;
 import app.utility.validation.Validate;
@@ -11,6 +12,7 @@ import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -53,7 +55,17 @@ public class ShowroomBean {
 
     }
 
-    public List<Showroom> getShowrooms(){
+//    private void populateRelationships(Showroom showroom) throws SQLException {
+//
+//        List<Car> cars =
+//                dao.selectWhere(Car.class,
+//                        "showroomId",
+//                        showroom.getId());
+//
+//        showroom.setCars(cars);
+//    }
+
+    public List<Showroom> getShowrooms() throws SQLException {
         List<Showroom> showrooms = dao.selectAll(Showroom.class);
 
         for(Showroom showroom : showrooms){
