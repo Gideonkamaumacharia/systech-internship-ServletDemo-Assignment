@@ -4,6 +4,7 @@ import app.framework.ShowroomFramework;
 import app.framework.ShowroomTable;
 import app.dao.GenericDao;
 import app.model.Car;
+import app.model.User;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletConfig;
@@ -104,10 +105,12 @@ public class BaseAction<T> extends HttpServlet {
         }
     }
 
+
     protected void handleCreate(T entity,
                                 HttpServletRequest req,
                                 HttpServletResponse resp) throws ServletException, IOException {
-        throw new UnsupportedOperationException("handleCreate() not implemented");
+
+
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp)

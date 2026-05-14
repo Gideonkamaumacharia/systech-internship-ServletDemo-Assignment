@@ -1,9 +1,9 @@
-package app.action;
+package app.action.baseListAction;
 
+import app.action.BaseAction;
 import app.bean.BrandBean;
 import app.framework.ShowroomTable;
 import app.model.Brand;
-import app.model.Car;
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.List;
 
 @WebServlet("/brand_list")
-public class BrandList extends BaseAction<Brand>{
+public class BrandList extends BaseAction<Brand> {
 
     @EJB
     BrandBean brandBean;

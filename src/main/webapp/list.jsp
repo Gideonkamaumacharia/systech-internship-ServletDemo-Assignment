@@ -196,6 +196,20 @@
                     </c:if>
                 </td>
 
+                <td>
+                    <a href="editCar?id=${car.id}">
+                        <button>Edit</button>
+                    </a>
+
+                    <form action="deleteCar" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="${car.id}" />
+
+                        <button type="submit">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+
             </tr>
         </c:forEach>
 

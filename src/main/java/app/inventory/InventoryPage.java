@@ -1,4 +1,4 @@
-package app.controller;
+package app.inventory;
 
 import app.model.Car;
 import jakarta.servlet.annotation.WebServlet;

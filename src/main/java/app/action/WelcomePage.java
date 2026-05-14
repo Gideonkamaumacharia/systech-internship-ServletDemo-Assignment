@@ -1,4 +1,4 @@
-package app.controller;
+package app.action;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;

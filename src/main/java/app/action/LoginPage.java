@@ -1,10 +1,8 @@
-package app.controller;
+package app.action;
 
 import app.bean.UserBean;
-import app.dao.GenericDao;
 import app.model.User;
 import jakarta.ejb.EJB;
-import jakarta.inject.Inject;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;

@@ -241,6 +241,115 @@ public class GenericDao {
         }
     }
 
+    public <T> void update(Class<T> clazz, T entity) {
+        String tableName = clazz.getSimpleName().toLowerCase() + "s";
+
+        try (Connection connection = helper.getConnection()) {
+
+            Field[] fields = clazz.getDeclaredFields();
+
+            StringBuilder sql = new StringBuilder(
+                    "UPDATE " + tableName + " SET "
+            );
+
+            List<Object> values = new ArrayList<>();
+
+            Object idValue = null;
+
+            for (Field field : fields) {
+                field.setAccessible(true);
+                Class<?> ft = field.getType();
+
+                boolean isCollection =
+                        java.util.Collection.class.isAssignableFrom(ft);
+
+                boolean isDomainObject =
+                        ft.getPackage() != null &&
+                                ft.getPackage().getName().startsWith("app.model");
+
+                boolean hasRelationship =
+                        field.isAnnotationPresent(
+                                ShowroomRelationship.class
+                        );
+
+                if (isCollection || isDomainObject || hasRelationship) {
+                    continue;
+                }
+
+                Object value = field.get(entity);
+
+                // Store ID separately for WHERE clause
+                if (field.getName().equalsIgnoreCase("id")) {
+                    idValue = value;
+                    continue;
+                }
+
+                if (value != null) {
+
+                    if (!values.isEmpty()) {
+                        sql.append(", ");
+                    }
+
+                    sql.append(field.getName()).append(" = ?");
+                    values.add(value);
+                }
+            }
+
+            if (idValue == null) {
+                throw new RuntimeException(
+                        "Cannot update entity without ID"
+                );
+            }
+
+            sql.append(" WHERE id = ?");
+
+            PreparedStatement ps =
+                    connection.prepareStatement(sql.toString());
+
+            for (int i = 0; i < values.size(); i++) {
+                ps.setObject(i + 1, values.get(i));
+            }
+
+            ps.setObject(values.size() + 1, idValue);
+
+            int rows = ps.executeUpdate();
+
+            System.out.println(
+                    "Updated " + rows +
+                            " row(s) in " + tableName
+            );
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> void delete(Class<T> clazz, Long id) {
+
+        String tableName =
+                clazz.getSimpleName().toLowerCase() + "s";
+
+        String sql =
+                "DELETE FROM " + tableName + " WHERE id = ?";
+
+        try (Connection connection = helper.getConnection();
+             PreparedStatement ps =
+                     connection.prepareStatement(sql)) {
+
+            ps.setLong(1, id);
+
+            int rows = ps.executeUpdate();
+
+            System.out.println(
+                    "Deleted " + rows +
+                            " row(s) from " + tableName
+            );
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
         public <T > void populateRelationships (T entity){
             Class<?> clazz = entity.getClass();
             for (Field field : clazz.getDeclaredFields()) {
