@@ -1,41 +1,45 @@
 package app.model;
 
 import app.framework.*;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.List;
 
+@Entity
+@Table(name = "showrooms")
 @ShowroomForm(label = "Register Showroom", actionUrl = "./showroom")
 @ShowroomTable(label = "Branch Locations", tableUrl = "./showroom_list", registerUrl = "./showroom",listJsp = "showroomList.jsp")
 public class Showroom implements Serializable {
 
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ShowroomFormField(label = "Location", placeholder = "e.g. Nairobi CBD")
     @ShowroomTableCol(label = "Location")
+    @Column(name = "location_name",nullable = false)
     private String locationName;
 
     @ShowroomFormField(label = "Manager", type = "select",source = User.class)
     @ShowroomTableCol(label = "Manager")
-    private Long managerId;
+    @OneToOne
+    @JoinColumn(name = "manager_id",nullable = false)
+    private User manager;
 
     @ShowroomFormField(label = "Capacity", placeholder = "Enter Capacity")
     @ShowroomTableCol(label = "Capacity")
+    @Column(name = "capacity",nullable = false)
     private int capacity;
 
-    //A showroom can have many cars or users
-    @ShowroomRelationship(mappedBy = "showroomId")
+
+    @OneToMany(mappedBy = "showroom")
     private List<Car> cars;
 
-    // For the single Manager object
-    @ShowroomRelationship(mappedBy = "showroomId")
+    @OneToMany(mappedBy = "showroom")
     private List<User> users;
 
-    // For the single Manager object
-    // Add this to hold the actual User data after a JOIN or secondary fetch
-    @ShowroomRelationship(mappedBy = "id") // Link via managerId to User's ID
-    private User manager;
+
 
     public User getManager() { return manager; }
     public void setManager(User manager) { this.manager = manager; }
@@ -67,13 +71,6 @@ public class Showroom implements Serializable {
         this.locationName = locationName;
     }
 
-    public Long getManagerId() {
-        return managerId;
-    }
-
-    public void setManagerId(Long managerId) {
-        this.managerId = managerId;
-    }
 
     public int getCapacity() {
         return capacity;

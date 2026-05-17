@@ -38,7 +38,7 @@ public class UserBean {
             throw new IllegalArgumentException("Invalid car data");
         }
 
-        dao.insert(User.class,user);
+        dao.insert(user);
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("REGISTER_USER");
@@ -46,7 +46,7 @@ public class UserBean {
         log.setTimeStamp(new Date());
 
         if(user != null){
-            log.setUserId(user.getId());
+            log.setUser(user);
         }else {
             log.setDetails(log.getDetails() + " (Action by Anonymous/System)");
         }
@@ -61,22 +61,15 @@ public class UserBean {
     public List<User> getUsers(String showroomId){
         List<User> data;
 
-        try{
+
             if( showroomId != null && !showroomId.isEmpty()){
                 data = dao.selectWhere(User.class,"showroomId",Long.parseLong(showroomId));
             }else{
                 data = dao.selectAll(User.class);
             }
 
-            for (User user : data) {
-                dao.populateRelationships(user);
-            }
-
             return data;
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public User findByUsername(String username){

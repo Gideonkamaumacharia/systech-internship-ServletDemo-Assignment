@@ -36,7 +36,7 @@ public class BrandBean {
             throw new IllegalArgumentException("Invalid brand data");
         }
 
-        dao.insert(Brand.class,brand);
+        dao.insert(brand);
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("CREATE_BRAND");
@@ -44,7 +44,7 @@ public class BrandBean {
         log.setTimeStamp(new Date());
 
         if(currentUser != null){
-            log.setUserId(currentUser.getId());
+            log.setUser(currentUser);
         }else {
             log.setDetails(log.getDetails() + " (Action by Anonymous/System)");
         }
@@ -59,10 +59,6 @@ public class BrandBean {
         List<Brand> data;
 
         data = dao.selectAll(Brand.class);
-
-        for (Brand brand : data) {
-            dao.populateRelationships(brand);
-        }
 
         return data;
     }

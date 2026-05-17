@@ -18,7 +18,7 @@ public class CarList extends BaseListAction<Car> {
 
     @Override
     protected List<Car> fetchList(HttpServletRequest req) throws Exception {
-        String showroomId = req.getParameter("showroomId");
+        String showroomId = req.getParameter("showroom_Id");
         return carBean.getCars(showroomId);
     }
 }

@@ -18,7 +18,7 @@ public class UserList extends BaseListAction<User> {
 
     @Override
     protected List<User> fetchList(HttpServletRequest req) throws Exception {
-        String showroomId = req.getParameter("showroomId");
+        String showroomId = req.getParameter("showroom_Id");
         return userBean.getUsers(showroomId);
     }
 }

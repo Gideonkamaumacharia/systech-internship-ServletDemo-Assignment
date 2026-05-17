@@ -197,9 +197,9 @@
                 </p>
             </c:if>
 
-            <c:if test="${not empty param.showroomId}">
+            <c:if test="${not empty param.showroom_Id}">
                 <div class="alert">
-                    Showing cars for Showroom ID: ${param.showroomId}
+                    Showing cars for Showroom ID: ${param.showroom_Id}
                     | <a href="./list">Show All Cars</a>
                 </div>
             </c:if>

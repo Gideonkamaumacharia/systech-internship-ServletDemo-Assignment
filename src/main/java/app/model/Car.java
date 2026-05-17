@@ -1,53 +1,64 @@
 package app.model;
 
 import app.framework.*;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 
+@Entity
+@Table(name = "cars")
 @ShowroomForm(label = "Register New Vehicle", actionUrl = "./car")
 @ShowroomTable(label = "Showroom Inventory", tableUrl = "./list", registerUrl = "./car")
 public class Car implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ShowroomFormField(label = "Car Model",name = "carModel", placeholder = "Enter car name")
     @ShowroomTableCol(label = "Model")
+    @Column(name = "car_model",nullable = false)
     private String carModel;
 
     @ShowroomFormField(label = "Engine Specification",name = "engineType", placeholder = "Enter engine type")
     @ShowroomTableCol(label = "Engine Type")
+    @Column(name = "engine_type",nullable = false)
     private String engineType;
 
     @ShowroomFormField(label = "Year",name = "year", placeholder = "Enter engine type")
     @ShowroomTableCol(label = "Year")
+    @Column
     private Integer year;
 
     @ShowroomFormField(label = "Price",name = "price", placeholder = "Enter price")
     @ShowroomTableCol(label = "Price")
+    @Column
     private Double price;
 
-    //ManyToOne
-    @ShowroomRelationship(mappedBy = "Id")
     @ShowroomTableCol(label = "Brand")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "brand_id")
     private Brand brand;
 
     @ShowroomTableCol(label = "Category")
-    @ShowroomRelationship(mappedBy = "Id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @ShowroomTableCol(label = "Showroom")
-    @ShowroomRelationship(mappedBy = "Id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "showroom_id")
     private Showroom showroom;
 
-    //Foreign keys
-    @ShowroomFormField(label = "Brand",name = "brandId",type = "select",source = Brand.class)
-    private Long brandId;
-
-    @ShowroomFormField(label = "Category",name = "categoryId",type = "select",source = Category.class)
-    private Long categoryId;
-
-    @ShowroomFormField(label = "Showroom",name = "showroomId",type = "select",source = Showroom.class)
-    private Long showroomId;
+//    //Foreign keys
+//    @ShowroomFormField(label = "Brand",name = "brandId",type = "select",source = Brand.class)
+//    private Long brandId;
+//
+//    @ShowroomFormField(label = "Category",name = "categoryId",type = "select",source = Category.class)
+//    private Long categoryId;
+//
+//    @ShowroomFormField(label = "Showroom",name = "showroomId",type = "select",source = Showroom.class)
+//    private Long showroomId;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -76,29 +87,6 @@ public class Car implements Serializable {
         this.showroom = showroom;
     }
 
-    public Long getBrandId() {
-        return brandId;
-    }
-
-    public void setBrandId(Long brandId) {
-        this.brandId = brandId;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public Long getShowroomId() {
-        return showroomId;
-    }
-
-    public void setShowroomId(Long showroomId) {
-        this.showroomId = showroomId;
-    }
 
     public String getCarModel() {
         return carModel;

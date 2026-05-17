@@ -35,7 +35,7 @@ public class ShowroomBean {
             throw new IllegalArgumentException("Invalid car data");
         }
 
-        dao.insert(Showroom.class,showroom);
+        dao.insert(showroom);
 
         AuditLog auditLog = new AuditLog();
         auditLog.setDetails("CREATE_SHOWROOM");
@@ -43,7 +43,7 @@ public class ShowroomBean {
         auditLog.setTimeStamp(new Date());
 
         if(currentUser != null){
-            auditLog.setUserId(currentUser.getId());
+            auditLog.setUser(currentUser);
         }else {
             auditLog.setDetails(auditLog.getDetails() + " (Action by Anonymous/System)");
         }
@@ -68,9 +68,6 @@ public class ShowroomBean {
     public List<Showroom> getShowrooms() throws SQLException {
         List<Showroom> showrooms = dao.selectAll(Showroom.class);
 
-        for(Showroom showroom : showrooms){
-            dao.populateRelationships(showroom);
-        }
         return showrooms;
     }
 }

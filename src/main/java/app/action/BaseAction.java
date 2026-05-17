@@ -90,7 +90,6 @@ public class BaseAction<T> extends HttpServlet {
         try {
             T entity = this.serializeForm(req.getParameterMap());
             handleCreate(entity,req,resp);
-            //dao.insert(this.getType(),entity);
             System.out.println("DAO insert called for: " + entity.getClass().getSimpleName());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -409,7 +408,7 @@ public class BaseAction<T> extends HttpServlet {
         writer.println("</html>");
     }
     @SuppressWarnings("unchecked")
-    public Class<T> getType() { //Returns the actual entity class eg Person.class
+    public Class<T> getType() {
         ParameterizedType superClass =
                 (ParameterizedType) getClass().getGenericSuperclass();
 

@@ -171,7 +171,7 @@
 
                     <span>
                         <strong>Total Inventory:</strong>
-                        <span class="badge">${fn:length(category.cars)}</span>
+                        <span class="badge">${empty category.cars ? 0 : fn:length(category.cars)}</span>
                     </span>
 
                     <a href="#" class="btn-view">Details →</a>

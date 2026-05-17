@@ -12,6 +12,7 @@ import java.io.IOException;
 @WebServlet("/deleteCar")
 public class DeleteCarAction extends BaseAction<Car> {
 
+
     @EJB
     CarBean carBean;
 

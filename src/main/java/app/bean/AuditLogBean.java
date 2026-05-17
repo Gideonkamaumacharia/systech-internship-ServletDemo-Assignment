@@ -29,7 +29,7 @@ public class AuditLogBean {
             auditLog.setTimeStamp(new Date());
         }
         try {
-            dao.insert(AuditLog.class,auditLog);
+            dao.insert(auditLog);
             System.out.println("Audit Log saved: " + auditLog.getActionPerformed());
             context.createProducer().send(auditQueue,auditLog.getActionPerformed());
         } catch (Exception e) {

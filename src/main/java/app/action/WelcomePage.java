@@ -22,6 +22,7 @@ public class WelcomePage implements Servlet {
         System.out.println("Servlet Started and initialized");
     }
 
+
     @Override
     public void service(ServletRequest request, ServletResponse response)
             throws ServletException, IOException {

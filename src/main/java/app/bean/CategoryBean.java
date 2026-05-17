@@ -35,7 +35,7 @@ public class CategoryBean {
             throw new IllegalArgumentException("Invalid category data");
         }
 
-        dao.insert(Category.class,category);
+        dao.insert(category);
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("CREATE_CATEGORY");
@@ -43,7 +43,7 @@ public class CategoryBean {
         log.setTimeStamp(new Date());
 
         if(currentUser != null){
-            log.setUserId(currentUser.getId());
+            log.setUser(currentUser);
         }else {
             log.setDetails(log.getDetails() + " (Action by Anonymous/System)");
         }
@@ -58,9 +58,6 @@ public class CategoryBean {
     public List<Category> getCategories(){
         List<Category> categories = dao.selectAll(Category.class);
 
-        for(Category category : categories){
-            dao.populateRelationships(category);
-        }
 
         return categories;
     }

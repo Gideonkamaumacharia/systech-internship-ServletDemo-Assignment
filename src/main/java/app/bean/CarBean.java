@@ -37,11 +37,11 @@ public class CarBean {
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("CREATE_CAR");
-        log.setDetails("Added model: " + car.getCarModel() + " to showroom ID : " + car.getShowroomId());
+        log.setDetails("Added model: " + car.getCarModel() + " to showroom ID : " + car.getShowroom().getId());
         log.setTimeStamp(new Date());
 
         if(currentUser != null){
-            log.setUserId(currentUser.getId());
+            log.setUser(currentUser);
         }else {
             log.setDetails(log.getDetails() + " (Action by Anonymous/System)");
         }
@@ -51,6 +51,37 @@ public class CarBean {
 
         System.out.println("CarBean: createCar() called");
     }
+
+    public void update(Car car){
+        dao.update(car);
+    }
+
+    public void remove(Long id){
+        dao.delete(id);
+    }
+
+    public Car findById(Long id){
+        return dao.findById(id);
+    }
+
+    public List<Car> getCars(String showroomId)  {
+        List<Car> data;
+
+            if (showroomId != null && !showroomId.isEmpty()) {
+                System.out.println("EJB filtering: showroomId = " + showroomId);
+                data = dao.findByShowroom( Long.parseLong(showroomId));
+            } else {
+                data = dao.findAll();
+            }
+
+
+            return data;
+
+    }
+}
+
+
+
 
 //    private void populateRelationships(Car car) {
 //        if (car.getBrandId() != null) {
@@ -73,43 +104,6 @@ public class CarBean {
 //            car.setShowroom(showroom);
 //        }
 //    }
-
-    public void update(Car car){
-        dao.update(car);
-    }
-
-    public void remove(Long id){
-        dao.delete(id);
-    }
-
-    public Car findById(Long id){
-        return dao.findById(id);
-    }
-
-    public List<Car> getCars(String showroomId)  {
-        List<Car> data;
-
-        try {
-            if (showroomId != null && !showroomId.isEmpty()) {
-                System.out.println("EJB filtering: showroomId = " + showroomId);
-                data = dao.findByShowroom( Long.parseLong(showroomId));
-            } else {
-                data = dao.findAll();
-            }
-
-
-            return data;
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-}
-
-
-
-
-
 
 
 

@@ -4,30 +4,45 @@ import app.framework.ShowroomForm;
 import app.framework.ShowroomFormField;
 import app.framework.ShowroomTable;
 import app.framework.ShowroomTableCol;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.List;
 
 @ShowroomForm(label = "Register New User", actionUrl = "./user")
 @ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "./user",listJsp = "userList.jsp")
+@Entity
+@Table(name = "users")
 public class User implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ShowroomFormField(label = "UserName", placeholder = "Enter userName")
     @ShowroomTableCol(label = "User Name")
+    @Column(name = "user_name",nullable = false)
     private String username;
 
     @ShowroomFormField(label = "Password", placeholder = "Enter password")
     @ShowroomTableCol(label = "Password")
-    private String password; // Hash this in real apps!
+    @Column(nullable = false)
+    private String password;
 
     @ShowroomFormField(label = "Role", placeholder = "Role")
     @ShowroomTableCol(label = "Role")
+    @Column
     private String role;
 
     //many logs to one user
+    @OneToMany(mappedBy = "user")
     private List<AuditLog> logs;
+
+
+    //one showroom many users
+    @ManyToOne
+    @JoinColumn(name = "showroom_id")
+    private Showroom showroom;
 
     public List<AuditLog> getLogs() {
         return logs;
@@ -45,25 +60,12 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    //one showroom many users
-    private Showroom showroom;
-    //Foreign key
-    private Long showroomId;
-
     public Showroom getShowroom() {
         return showroom;
     }
 
     public void setShowroom(Showroom showroom) {
         this.showroom = showroom;
-    }
-
-    public Long getShowroomId() {
-        return showroomId;
-    }
-
-    public void setShowroomId(Long showroomId) {
-        this.showroomId = showroomId;
     }
 
     public String getUsername() {

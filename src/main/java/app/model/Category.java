@@ -1,26 +1,32 @@
 package app.model;
 
 import app.framework.*;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.List;
 
 @ShowroomForm(label = "Add Category", actionUrl = "./category")
 @ShowroomTable(label = "Vehicle Categories", tableUrl = "./category_list", registerUrl = "./category",listJsp = "categoryList.jsp")
+@Entity
+@Table(name = "categories")
 public class Category implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ShowroomFormField(label = "Category Name", placeholder = "e.g. SUV")
     @ShowroomTableCol(label = "Category")
+    @Column
     private String name;
 
     @ShowroomFormField(label = "Description ", placeholder = "Description")
     @ShowroomTableCol(label = "Description")
+    @Column
     private String description;
 
-    //A category contains many cars
-    @ShowroomRelationship(mappedBy = "categoryId") // Look for cars where categoryId = this.id
+    @OneToMany(mappedBy = "category",fetch = FetchType.EAGER)
     private List<Car> cars;
 
     public List<Car> getCars() {

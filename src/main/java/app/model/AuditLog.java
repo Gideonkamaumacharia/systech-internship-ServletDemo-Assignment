@@ -2,38 +2,42 @@ package app.model;
 
 import app.framework.*;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.Date;
 
-
+@Entity
+@Table(name = "audit_logs")
 @ShowroomForm(label = "Log", actionUrl = "./logs")
 @ShowroomTable(label = "Log", tableUrl = "./applogs", registerUrl = "./logs",listJsp = "audit_logs.jsp")
-@ApplicationScoped
 public class AuditLog implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ShowroomFormField(label = "Action", placeholder = "What action")
     @ShowroomTableCol(label = "Action")
+    @Column(name = "action_performed")
     private String actionPerformed;
 
     @ShowroomFormField(label = "Time", placeholder = "Time")
     @ShowroomTableCol(label = "Time")
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "time_stamp")
     private Date timeStamp;
 
     @ShowroomFormField(label = "Details", placeholder = "Enter the details")
     @ShowroomTableCol(label = "Details")
+    @Column
     private String details;
 
-
-    //ManyToOne -> one user performs many actions that are logged
-    // The Object for the JSP (e.g., ${log.user.username})
-    @ShowroomRelationship(mappedBy = "id")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @ShowroomTableCol(label = "User")
     private User user;
 
-    //Foreign key
-    private Long userId;
 
     public AuditLog(){}
 
@@ -49,14 +53,6 @@ public class AuditLog implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public String getActionPerformed() {
