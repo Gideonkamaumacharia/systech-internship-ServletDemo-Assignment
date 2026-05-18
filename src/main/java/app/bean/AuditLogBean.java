@@ -1,5 +1,6 @@
 package app.bean;
 
+import app.dao.AuditLogDAO;
 import app.dao.GenericDao;
 import app.model.AuditLog;
 import jakarta.annotation.Resource;
@@ -16,7 +17,7 @@ import java.util.List;
 public class AuditLogBean {
 
     @Inject
-    GenericDao dao;
+    AuditLogDAO dao;
 
     @Inject
     JMSContext context;
@@ -39,6 +40,6 @@ public class AuditLogBean {
     }
 
     public List<AuditLog> list(){
-        return dao.selectAll(AuditLog.class);
+        return dao.findAll();
     }
 }

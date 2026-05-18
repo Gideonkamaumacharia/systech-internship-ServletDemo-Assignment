@@ -22,7 +22,7 @@ public class ShowroomValidator implements Validate<Showroom>{
         if (showroom == null) return false;
 
         return helper.isValidText(showroom.getLocationName()) &&
-                showroom.getId() > 0 &&
+                showroom.getManagerId() > 0 &&
                 showroom.getCapacity() > 0 ;
     }
 }

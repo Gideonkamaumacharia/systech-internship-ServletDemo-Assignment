@@ -1,19 +1,14 @@
 package app.bean;
 
-import app.dao.GenericDao;
+import app.dao.BrandDAO;
 import app.model.AuditLog;
 import app.model.Brand;
-import app.model.Car;
 import app.model.User;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
-import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
-
-
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +20,7 @@ public class BrandBean {
     private Validate<Brand> validator;
 
     @Inject
-    GenericDao dao;
+    BrandDAO dao;
 
     @Inject
     Event<AuditLog> auditLogEvent;
@@ -58,7 +53,7 @@ public class BrandBean {
     public List<Brand> getbrands()  {
         List<Brand> data;
 
-        data = dao.selectAll(Brand.class);
+        data = dao. findAll();
 
         return data;
     }

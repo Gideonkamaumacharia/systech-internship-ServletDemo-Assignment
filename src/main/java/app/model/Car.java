@@ -35,30 +35,33 @@ public class Car implements Serializable {
     @Column
     private Double price;
 
+    @ShowroomFormField(label = "Brand", type = "select", source = Brand.class)
+    @Transient
+    private Long brandId;
+
     @ShowroomTableCol(label = "Brand")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
+    @ShowroomFormField(label = "Category", type = "select", source = Category.class)
+    @Transient
+    private Long categoryId;
+
     @ShowroomTableCol(label = "Category")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ShowroomFormField(label = "Showroom", type = "select", source = Showroom.class)
+    @Transient
+    private Long showroomId;
+
     @ShowroomTableCol(label = "Showroom")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "showroom_id")
     private Showroom showroom;
 
-//    //Foreign keys
-//    @ShowroomFormField(label = "Brand",name = "brandId",type = "select",source = Brand.class)
-//    private Long brandId;
-//
-//    @ShowroomFormField(label = "Category",name = "categoryId",type = "select",source = Category.class)
-//    private Long categoryId;
-//
-//    @ShowroomFormField(label = "Showroom",name = "showroomId",type = "select",source = Showroom.class)
-//    private Long showroomId;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -118,6 +121,30 @@ public class Car implements Serializable {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Long getShowroomId() {
+        return showroomId;
+    }
+
+    public void setShowroomId(Long showroomId) {
+        this.showroomId = showroomId;
+    }
+
+    public Long getBrandId() {
+        return brandId;
+    }
+
+    public void setBrandId(Long brandId) {
+        this.brandId = brandId;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getPerformanceLabel() {

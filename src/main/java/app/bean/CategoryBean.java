@@ -1,5 +1,6 @@
 package app.bean;
 
+import app.dao.CategoryDAO;
 import app.dao.GenericDao;
 import app.model.AuditLog;
 import app.model.Category;
@@ -23,7 +24,7 @@ public class CategoryBean {
     private Validate<Category> validator;
 
     @Inject
-    GenericDao dao;
+    CategoryDAO dao;
 
     @Inject
     private Event<AuditLog> auditLogEvent;
@@ -56,9 +57,6 @@ public class CategoryBean {
     }
 
     public List<Category> getCategories(){
-        List<Category> categories = dao.selectAll(Category.class);
-
-
-        return categories;
+        return dao.findAll();
     }
 }

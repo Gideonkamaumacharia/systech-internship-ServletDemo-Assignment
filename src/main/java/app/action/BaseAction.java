@@ -90,7 +90,7 @@ public class BaseAction<T> extends HttpServlet {
         try {
             T entity = this.serializeForm(req.getParameterMap());
             handleCreate(entity,req,resp);
-            System.out.println("DAO insert called for: " + entity.getClass().getSimpleName());
+            System.out.println("handleCreate() called for : " + entity.getClass().getSimpleName());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

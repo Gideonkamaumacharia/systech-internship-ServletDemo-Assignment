@@ -24,6 +24,7 @@ public class CarBean {
     @Inject
     CarDAO dao;
 
+
     @Inject
     private Event<AuditLog> auditLogEvent;
 
@@ -37,7 +38,7 @@ public class CarBean {
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("CREATE_CAR");
-        log.setDetails("Added model: " + car.getCarModel() + " to showroom ID : " + car.getShowroom().getId());
+        log.setDetails("Added model: " + car.getCarModel() + " to : " + car.getShowroom().getLocationName());
         log.setTimeStamp(new Date());
 
         if(currentUser != null){
@@ -52,8 +53,13 @@ public class CarBean {
         System.out.println("CarBean: createCar() called");
     }
 
-    public void update(Car car){
-        dao.update(car);
+    public void update(Car updatedCar){
+        Car existingCar = dao.findById(updatedCar.getId());
+
+        existingCar.setCarModel(updatedCar.getCarModel());
+        existingCar.setPrice(updatedCar.getPrice());
+
+        dao.update(existingCar);
     }
 
     public void remove(Long id){
@@ -83,27 +89,6 @@ public class CarBean {
 
 
 
-//    private void populateRelationships(Car car) {
-//        if (car.getBrandId() != null) {
-//            Brand brand =
-//                    dao.selectById(Brand.class, car.getBrandId());
-//            car.setBrand(brand);
-//        }
-//
-//        if (car.getCategoryId() != null) {
-//            Category category =
-//                    dao.selectById(Category.class,
-//                            car.getCategoryId());
-//            car.setCategory(category);
-//        }
-//
-//        if (car.getShowroomId() != null) {
-//            Showroom showroom =
-//                    dao.selectById(Showroom.class,
-//                            car.getShowroomId());
-//            car.setShowroom(showroom);
-//        }
-//    }
 
 
 

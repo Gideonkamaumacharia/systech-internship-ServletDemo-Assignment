@@ -1,6 +1,7 @@
 package app.bean;
 
 import app.dao.GenericDao;
+import app.dao.UserDAO;
 import app.model.AuditLog;
 import app.model.Car;
 import app.model.Showroom;
@@ -17,6 +18,7 @@ import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Stateless
 public class UserBean {
@@ -26,7 +28,7 @@ public class UserBean {
     private Validate<User> validator;
 
     @Inject
-    GenericDao dao;
+    UserDAO dao;
 
     @Inject
     private Event<AuditLog> auditLogEvent;
@@ -63,9 +65,9 @@ public class UserBean {
 
 
             if( showroomId != null && !showroomId.isEmpty()){
-                data = dao.selectWhere(User.class,"showroomId",Long.parseLong(showroomId));
+                data = dao.findByShowroom(Long.parseLong(showroomId));
             }else{
-                data = dao.selectAll(User.class);
+                data = dao.findAll();
             }
 
             return data;
@@ -74,9 +76,9 @@ public class UserBean {
 
     public User findByUsername(String username){
         try{
-            List<User> users = dao.selectWhere(User.class,"username",username);
+            Optional<User> users = dao. findByUsername(username);
                 if (!users.isEmpty()) {
-                    return users.get(0);
+                    return users.get();
             }
         }catch(Exception e){
             e.printStackTrace();

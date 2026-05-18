@@ -26,9 +26,7 @@ public class Brand implements Serializable {
     @Column(name = "country_of_origin")
     private String countryOfOrigin;
 
-    //OneToMany
-
-    @OneToMany(mappedBy = "brand")
+    @OneToMany(mappedBy = "brand",fetch = FetchType.EAGER)
     private List<Car> cars;
 
     public List<Car> getCars() {

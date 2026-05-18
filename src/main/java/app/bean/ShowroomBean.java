@@ -1,6 +1,7 @@
 package app.bean;
 
 import app.dao.GenericDao;
+import app.dao.ShowroomDAO;
 import app.model.AuditLog;
 import app.model.Car;
 import app.model.Showroom;
@@ -24,7 +25,7 @@ public class ShowroomBean {
     private Validate<Showroom> validator;
 
     @Inject
-    GenericDao dao;
+    ShowroomDAO dao;
 
     @Inject
     private Event<AuditLog> auditLogEvent;
@@ -34,6 +35,10 @@ public class ShowroomBean {
         if(!validator.isValid(showroom)){
             throw new IllegalArgumentException("Invalid car data");
         }
+
+        User manager = dao.findByUserId(showroom.getManagerId());
+
+        showroom.setManager(manager);
 
         dao.insert(showroom);
 
@@ -55,19 +60,9 @@ public class ShowroomBean {
 
     }
 
-//    private void populateRelationships(Showroom showroom) throws SQLException {
-//
-//        List<Car> cars =
-//                dao.selectWhere(Car.class,
-//                        "showroomId",
-//                        showroom.getId());
-//
-//        showroom.setCars(cars);
-//    }
 
     public List<Showroom> getShowrooms() throws SQLException {
-        List<Showroom> showrooms = dao.selectAll(Showroom.class);
 
-        return showrooms;
+        return dao.findAll();
     }
 }

@@ -13,8 +13,6 @@ import java.util.List;
 @ApplicationScoped
 public class GenericDao {
 
-//    @Inject
-//    private DataSourceHelper helper;
 
     @PersistenceContext
     private EntityManager em;
@@ -25,6 +23,7 @@ public class GenericDao {
 
     @Transactional
     public void insert(Object entity) {
+
         em.persist(entity);
     }
 
@@ -41,6 +40,7 @@ public class GenericDao {
     }
 
     public <T> T selectById(Class<T> clazz, Long id) {
+
         return em.find(clazz, id);
     }
 
@@ -56,6 +56,45 @@ public class GenericDao {
         ).setParameter("v", value).getResultList();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //    public void insert(Class<?> clazz, Object entity) {
 //

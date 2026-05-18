@@ -21,7 +21,11 @@ public class Showroom implements Serializable {
     @Column(name = "location_name",nullable = false)
     private String locationName;
 
-    @ShowroomFormField(label = "Manager", type = "select",source = User.class)
+
+    @ShowroomFormField(label = "Manager", type = "select", source = User.class)
+    @Transient
+    private Long managerId;
+
     @ShowroomTableCol(label = "Manager")
     @OneToOne
     @JoinColumn(name = "manager_id",nullable = false)
@@ -33,10 +37,10 @@ public class Showroom implements Serializable {
     private int capacity;
 
 
-    @OneToMany(mappedBy = "showroom")
+    @OneToMany(mappedBy = "showroom",fetch = FetchType.EAGER)
     private List<Car> cars;
 
-    @OneToMany(mappedBy = "showroom")
+    @OneToMany(mappedBy = "showroom",fetch = FetchType.EAGER)
     private List<User> users;
 
 
@@ -78,6 +82,14 @@ public class Showroom implements Serializable {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+    }
+
+    public Long getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(Long managerId) {
+        this.managerId = managerId;
     }
 
     @Override

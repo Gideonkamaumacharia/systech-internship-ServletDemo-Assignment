@@ -173,7 +173,7 @@
 
             <div>
 
-                <c:set var="usagePercent" value="${(fn:length(showroom.cars) / showroom.capacity) * 100}" />
+               <%-- <c:set var="usagePercent" value="${(fn:length(showroom.cars) / showroom.capacity) * 100}" /> --%>
 
                 <c:if test="${usagePercent >= 90 and showroom.capacity gt 0}">
                     <span class="status-badge full">CRITICAL: ${usagePercent}% Full</span>
