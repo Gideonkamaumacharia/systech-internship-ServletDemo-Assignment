@@ -40,7 +40,7 @@ public class CategoryBean {
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("CREATE_CATEGORY");
-        log.setDetails("Added Category: " + category.getName() + " from : " + category.getDescription());
+        log.setDetails("Added Category: " + category.getName() + " : " + category.getDescription());
         log.setTimeStamp(new Date());
 
         if(currentUser != null){

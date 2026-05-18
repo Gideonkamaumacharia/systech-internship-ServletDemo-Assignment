@@ -24,7 +24,6 @@ public class CarBean {
     @Inject
     CarDAO dao;
 
-
     @Inject
     private Event<AuditLog> auditLogEvent;
 
@@ -62,8 +61,17 @@ public class CarBean {
         dao.update(existingCar);
     }
 
-    public void remove(Long id){
+    public void remove(Car car,Long id){
+        car = dao.findById(id);
         dao.delete(id);
+
+        AuditLog log = new AuditLog();
+        log.setActionPerformed("DELETE_CAR");
+        log.setDetails("Deleted a car: " + car.getCarModel() + " from : " + car.getShowroom().getLocationName());
+        log.setTimeStamp(new Date());
+
+        auditLogEvent.fire(log);
+        System.out.println("EVENT FIRED: " + log.getActionPerformed());
     }
 
     public Car findById(Long id){

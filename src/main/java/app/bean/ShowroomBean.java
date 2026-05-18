@@ -1,9 +1,7 @@
 package app.bean;
 
-import app.dao.GenericDao;
 import app.dao.ShowroomDAO;
 import app.model.AuditLog;
-import app.model.Car;
 import app.model.Showroom;
 import app.model.User;
 import app.utility.validation.Validate;
