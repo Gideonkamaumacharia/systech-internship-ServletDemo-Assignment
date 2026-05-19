@@ -169,6 +169,9 @@
                             <span class="badge-admin">ADMIN</span>
                         </c:if>
                     </td>
+
+                    <c:set var="item" value="${user}" scope="request" />
+                    <jsp:include page="_actionButtons.jsp" />
                 </tr>
             </c:forEach>
 

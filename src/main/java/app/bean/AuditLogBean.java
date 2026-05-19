@@ -42,4 +42,11 @@ public class AuditLogBean {
     public List<AuditLog> list(){
         return dao.findAll();
     }
+
+    public void remove(Long id){
+
+        AuditLog log = dao.findById(id);
+        dao.delete(id);
+
+    }
 }

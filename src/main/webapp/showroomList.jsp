@@ -197,6 +197,10 @@
                 </p>
             </c:if>
 
+            <c:set var="item" value="${showroom}" scope="request" />
+            <jsp:include page="_actionButtons.jsp" />
+
+
             <c:if test="${not empty param.showroom_Id}">
                 <div class="alert">
                     Showing cars for Showroom ID: ${param.showroom_Id}

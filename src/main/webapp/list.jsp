@@ -196,19 +196,8 @@
                     </c:if>
                 </td>
 
-                <td>
-                    <a href="editCar?id=${car.id}">
-                        <button>Edit</button>
-                    </a>
-
-                    <form action="deleteCar" method="post" style="display:inline;">
-                        <input type="hidden" name="id" value="${car.id}" />
-
-                        <button type="submit">
-                            Delete
-                        </button>
-                    </form>
-                </td>
+                <c:set var="item" value="${car}" scope="request" />
+                <jsp:include page="_actionButtons.jsp" />
 
             </tr>
         </c:forEach>

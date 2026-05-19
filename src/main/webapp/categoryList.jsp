@@ -187,6 +187,9 @@
                     </div>
                 </c:if>
 
+                <c:set var="item" value="${category}" scope="request" />
+                <jsp:include page="_actionButtons.jsp" />
+
             </div>
 
         </c:forEach>

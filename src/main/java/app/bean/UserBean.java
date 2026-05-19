@@ -85,4 +85,24 @@ public class UserBean {
 
         }return null;
     }
+
+    public void remove(Long id){
+        User user = dao.findById(id);
+        dao.delete(id);
+
+        AuditLog log = new AuditLog();
+        log.setActionPerformed("DELETE_USER");
+        log.setDetails("Delete User: " + user.getUsername());
+        log.setTimeStamp(new Date());
+
+        if(user != null){
+            log.setUser(user);
+        }else {
+            log.setDetails(log.getDetails() + " (Action by Anonymous/System)");
+        }
+
+        auditLogEvent.fire(log);
+        System.out.println("EVENT FIRED: " + log.getActionPerformed());
+
+    }
 }

@@ -17,9 +17,14 @@ public abstract class BaseListAction<T> extends BaseAction<T> {
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
+        Class<T> clazz = getType();
+
+        ShowroomTable table = clazz.getAnnotation(ShowroomTable.class);
 
         try {
             List<T> dataList = fetchList(req);
+            req.setAttribute("editUrl",   table.editUrl());
+            req.setAttribute("deleteUrl", table.deleteUrl());
             req.setAttribute("dataList", dataList);
         } catch (Exception e) {
             throw new ServletException("Failed to fetch list", e);

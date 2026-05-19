@@ -1,10 +1,8 @@
 package app.bean;
 
 import app.dao.CategoryDAO;
-import app.dao.GenericDao;
 import app.model.AuditLog;
 import app.model.Category;
-import app.model.Showroom;
 import app.model.User;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
@@ -57,6 +55,21 @@ public class CategoryBean {
     }
 
     public List<Category> getCategories(){
+
         return dao.findAll();
+    }
+
+    public void remove(Long id){
+
+        Category category = dao.findById(id);
+        dao.delete(id);
+
+        AuditLog log = new AuditLog();
+        log.setActionPerformed("DELETE_CAR");
+        log.setDetails("Deleted " + category + " category.");
+        log.setTimeStamp(new Date());
+
+        auditLogEvent.fire(log);
+        System.out.println("EVENT FIRED: " + log.getActionPerformed());
     }
 }

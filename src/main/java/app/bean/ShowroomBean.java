@@ -2,6 +2,7 @@ package app.bean;
 
 import app.dao.ShowroomDAO;
 import app.model.AuditLog;
+import app.model.Car;
 import app.model.Showroom;
 import app.model.User;
 import app.utility.validation.Validate;
@@ -62,5 +63,33 @@ public class ShowroomBean {
     public List<Showroom> getShowrooms() throws SQLException {
 
         return dao.findAll();
+    }
+
+    public void remove(Long id){
+
+        Showroom showroom = dao.findByShowroomId(id);
+        dao.delete(id);
+
+        AuditLog log = new AuditLog();
+        log.setActionPerformed("DELETE_SHOWROOM");
+        log.setDetails("Deleted : "  + showroom.getLocationName());
+        log.setTimeStamp(new Date());
+
+        auditLogEvent.fire(log);
+        System.out.println("EVENT FIRED: " + log.getActionPerformed());
+    }
+
+    public Showroom findById(Long id){
+        return dao.findByShowroomId(id);
+    }
+
+    public void update(Showroom updatedShowroom){
+        Showroom existingShowroom = dao.findByShowroomId(updatedShowroom.getId());
+
+        existingShowroom.setLocationName(updatedShowroom.getLocationName());
+//        existingShowroom.setManagerId(updatedShowroom.getManagerId());
+        existingShowroom.setCapacity(updatedShowroom.getCapacity());
+
+        dao.update(existingShowroom);
     }
 }

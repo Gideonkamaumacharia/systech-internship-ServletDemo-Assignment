@@ -54,5 +54,7 @@ public class CarDAO {
         genericDao.update(car);
     }
 
-    public void delete(Long id)  { genericDao.delete(Car.class, id); }
+    public void delete(Long id)  {
+        genericDao.delete(Car.class, id);
+    }
 }

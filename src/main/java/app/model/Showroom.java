@@ -9,7 +9,8 @@ import java.util.List;
 @Entity
 @Table(name = "showrooms")
 @ShowroomForm(label = "Register Showroom", actionUrl = "./showroom")
-@ShowroomTable(label = "Branch Locations", tableUrl = "./showroom_list", registerUrl = "./showroom",listJsp = "showroomList.jsp")
+@ShowroomTable(label = "Branch Locations", tableUrl = "./showroom_list", registerUrl = "./showroom",listJsp = "showroomList.jsp" ,editUrl = "editShowroom",
+        deleteUrl  = "deleteShowroom")
 public class Showroom implements Serializable {
 
     @Id

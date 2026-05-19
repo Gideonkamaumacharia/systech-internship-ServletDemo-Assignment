@@ -10,7 +10,8 @@ import java.io.Serializable;
 import java.util.List;
 
 @ShowroomForm(label = "Register New User", actionUrl = "./user")
-@ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "./user",listJsp = "userList.jsp")
+@ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "./user",listJsp = "userList.jsp",editUrl = "editUser",
+        deleteUrl  = "deleteUser")
 @Entity
 @Table(name = "users")
 public class User implements Serializable {

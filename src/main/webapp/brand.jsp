@@ -157,6 +157,10 @@
                         <span class="badge">${brand.name}</span>
                     </td>
                     <td>${brand.countryOfOrigin}</td>
+
+                    <c:set var="item" value="${brand}" scope="request" />
+                    <jsp:include page="_actionButtons.jsp" />
+
                 </tr>
             </c:forEach>
 

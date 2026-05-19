@@ -8,7 +8,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "cars")
 @ShowroomForm(label = "Register New Vehicle", actionUrl = "./car")
-@ShowroomTable(label = "Showroom Inventory", tableUrl = "./list", registerUrl = "./car")
+@ShowroomTable(label = "Showroom Inventory", tableUrl = "./list", registerUrl = "./car",editUrl = "editCar",
+        deleteUrl  = "deleteCar")
 public class Car implements Serializable {
 
     @Id

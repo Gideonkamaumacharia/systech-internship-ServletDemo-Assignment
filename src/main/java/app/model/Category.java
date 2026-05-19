@@ -7,7 +7,8 @@ import java.io.Serializable;
 import java.util.List;
 
 @ShowroomForm(label = "Add Category", actionUrl = "./category")
-@ShowroomTable(label = "Vehicle Categories", tableUrl = "./category_list", registerUrl = "./category",listJsp = "categoryList.jsp")
+@ShowroomTable(label = "Vehicle Categories", tableUrl = "./category_list", registerUrl = "./category",listJsp = "categoryList.jsp",editUrl = "editCategory",
+        deleteUrl  = "deleteCategory")
 @Entity
 @Table(name = "categories")
 public class Category implements Serializable {

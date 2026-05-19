@@ -57,4 +57,19 @@ public class BrandBean {
 
         return data;
     }
+
+    public void remove(Long id){
+
+        Brand brand = dao.findById(id);
+        dao.delete(id);
+
+        AuditLog log = new AuditLog();
+        log.setActionPerformed("DELETE_BRAND");
+        log.setDetails("Deleted " + brand + " car brand.");
+        log.setTimeStamp(new Date());
+
+        auditLogEvent.fire(log);
+        System.out.println("EVENT FIRED: " + log.getActionPerformed());
+    }
+
 }

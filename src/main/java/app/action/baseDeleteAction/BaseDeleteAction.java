@@ -8,19 +8,19 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public abstract class BaseDeletionAction<T> extends BaseAction<T> {
+public abstract class BaseDeleteAction<T> extends BaseAction<T> {
 
-    protected  abstract void removeEntity(Class<T> entity,Long id) throws Exception;
+    protected  abstract void removeEntity(Long id) throws Exception;
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long id =
                 Long.parseLong(req.getParameter("id"));
 
-       Class<T> entity = getType();
+       //Class<T> entity = getType();
 
         try{
-            removeEntity(entity, id);
+            removeEntity (id);
         }catch (Exception e) {
             throw new ServletException("Failed to delete entity", e);
         }

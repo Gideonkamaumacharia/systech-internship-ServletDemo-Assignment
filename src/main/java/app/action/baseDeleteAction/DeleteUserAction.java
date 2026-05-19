@@ -1,20 +1,18 @@
 package app.action.baseDeleteAction;
 
-import app.bean.CarBean;
-import app.model.Car;
+import app.bean.UserBean;
+import app.model.User;
 import jakarta.ejb.EJB;
 import jakarta.servlet.annotation.WebServlet;
 
-@WebServlet("/deleteCar")
-public class DeleteCarAction extends BaseDeleteAction<Car> {
+@WebServlet("/deleteUser")
+public class DeleteUserAction extends BaseDeleteAction<User>{
 
     @EJB
-    CarBean carBean;
+    private UserBean userBean;
 
     @Override
     protected void removeEntity(Long id) throws Exception {
-        carBean.remove(id);
+        userBean.remove(id);
     }
-
-
 }

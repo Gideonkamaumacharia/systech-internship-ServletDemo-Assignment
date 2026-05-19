@@ -1,7 +1,6 @@
 package app.bean;
 
 import app.dao.CarDAO;
-import app.dao.GenericDao;
 import app.model.*;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
@@ -10,7 +9,6 @@ import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -61,8 +59,9 @@ public class CarBean {
         dao.update(existingCar);
     }
 
-    public void remove(Car car,Long id){
-        car = dao.findById(id);
+    public void remove(Long id){
+
+        Car car = dao.findById(id);
         dao.delete(id);
 
         AuditLog log = new AuditLog();

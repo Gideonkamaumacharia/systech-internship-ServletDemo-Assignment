@@ -60,6 +60,10 @@
                         </span>
                 </td>
                 <td>${log.details}</td>
+
+                <c:set var="item" value="${log}" scope="request" />
+                <jsp:include page="_actionButtons.jsp" />
+
             </tr>
         </c:forEach>
         </tbody>
