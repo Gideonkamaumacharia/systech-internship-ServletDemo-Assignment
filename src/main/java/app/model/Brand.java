@@ -1,6 +1,7 @@
 package app.model;
 
 import app.framework.*;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -26,7 +27,8 @@ public class Brand implements Serializable {
     @Column(name = "country_of_origin")
     private String countryOfOrigin;
 
-    @OneToMany(mappedBy = "brand",fetch = FetchType.EAGER)
+    @JsonbTransient
+    @OneToMany(mappedBy = "brand")
     private List<Car> cars;
 
     public List<Car> getCars() {

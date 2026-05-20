@@ -105,4 +105,8 @@ public class UserBean {
         System.out.println("EVENT FIRED: " + log.getActionPerformed());
 
     }
+
+    public User findById(Long id){
+       return dao.findById(id);
+    }
 }

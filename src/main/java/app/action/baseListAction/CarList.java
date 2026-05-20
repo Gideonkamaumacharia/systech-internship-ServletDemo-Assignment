@@ -15,10 +15,12 @@ public class CarList extends BaseListAction<Car> {
     @EJB
     private CarBean carBean;
 
-
     @Override
     protected List<Car> fetchList(HttpServletRequest req) throws Exception {
         String showroomId = req.getParameter("showroom_Id");
-        return carBean.getCars(showroomId);
+        String categoryId = req.getParameter("category_Id");
+        String brandId = req.getParameter("brand_Id");
+
+        return carBean.getCars(showroomId,categoryId,brandId);
     }
 }

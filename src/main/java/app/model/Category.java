@@ -1,6 +1,7 @@
 package app.model;
 
 import app.framework.*;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -27,7 +28,8 @@ public class Category implements Serializable {
     @Column
     private String description;
 
-    @OneToMany(mappedBy = "category",fetch = FetchType.EAGER)
+    @JsonbTransient
+    @OneToMany(mappedBy = "category")
     private List<Car> cars;
 
     public List<Car> getCars() {

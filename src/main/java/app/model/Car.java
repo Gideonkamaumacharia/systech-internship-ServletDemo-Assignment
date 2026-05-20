@@ -1,6 +1,7 @@
 package app.model;
 
 import app.framework.*;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -60,6 +61,7 @@ public class Car implements Serializable {
 
     @ShowroomTableCol(label = "Showroom")
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonbTransient
     @JoinColumn(name = "showroom_id")
     private Showroom showroom;
 

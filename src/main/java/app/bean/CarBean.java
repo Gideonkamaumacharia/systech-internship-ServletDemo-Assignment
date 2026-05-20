@@ -74,23 +74,35 @@ public class CarBean {
     }
 
     public Car findById(Long id){
+
         return dao.findById(id);
     }
 
-    public List<Car> getCars(String showroomId)  {
-        List<Car> data;
-
-            if (showroomId != null && !showroomId.isEmpty()) {
-                System.out.println("EJB filtering: showroomId = " + showroomId);
-                data = dao.findByShowroom( Long.parseLong(showroomId));
-            } else {
-                data = dao.findAll();
-            }
-
-
-            return data;
+    public List<Car> findAll() {
+       return dao.findAll();
 
     }
+
+
+    public List<Car> getCars(String showroomId,String brandId, String categoryId)  {
+        List<Car> data;
+
+        Long parsedShowroomId  = (showroomId  != null && !showroomId.isEmpty())  ? Long.parseLong(showroomId)  : null;
+        Long parsedBrandId     = (brandId     != null && !brandId.isEmpty())     ? Long.parseLong(brandId)     : null;
+        Long parsedCategoryId  = (categoryId  != null && !categoryId.isEmpty())  ? Long.parseLong(categoryId)  : null;
+
+        return dao.findByCriteria(parsedShowroomId, parsedBrandId, parsedCategoryId);
+
+        //        if (showroomId != null && !showroomId.isEmpty()) {
+//            System.out.println("EJB filtering: showroomId = " + showroomId);
+//            data = dao.findByShowroom( Long.parseLong(showroomId));
+//        } else {
+//            data = dao.findAll();
+//        }
+        //  return data;
+    }
+
+
 }
 
 

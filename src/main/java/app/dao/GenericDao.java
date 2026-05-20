@@ -55,6 +55,14 @@ public class GenericDao {
                 "SELECT e FROM " + clazz.getSimpleName() + " e WHERE e." + field + " = :v", clazz
         ).setParameter("v", value).getResultList();
     }
+
+    public EntityManager getEm() {
+        return em;
+    }
+
+    public void setEm(EntityManager em) {
+        this.em = em;
+    }
 }
 
 

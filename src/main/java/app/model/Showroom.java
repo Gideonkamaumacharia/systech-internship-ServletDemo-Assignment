@@ -1,6 +1,7 @@
 package app.model;
 
 import app.framework.*;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -37,9 +38,10 @@ public class Showroom implements Serializable {
     @Column(name = "capacity",nullable = false)
     private int capacity;
 
-
-    @OneToMany(mappedBy = "showroom",fetch = FetchType.EAGER)
+    @JsonbTransient
+    @OneToMany(mappedBy = "showroom")
     private List<Car> cars;
+
 
     @OneToMany(mappedBy = "showroom",fetch = FetchType.EAGER)
     private List<User> users;
