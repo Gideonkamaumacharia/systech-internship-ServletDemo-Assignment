@@ -51,17 +51,11 @@ public class UserDAO {
                 .getResultList();
     }
 
-    /**
-     * Looks up a single user by username — useful for login / auth checks.
-     */
     public Optional<User> findByUsername(String username) {
         List<User> results = genericDao.selectWhere(User.class, "username", username);
         return results.stream().findFirst();
     }
 
-    /**
-     * Returns all users with a given role (e.g. "ADMIN", "SALES").
-     */
     public List<User> findByRole(String role) {
         return genericDao.selectWhere(User.class, "role", role);
     }
