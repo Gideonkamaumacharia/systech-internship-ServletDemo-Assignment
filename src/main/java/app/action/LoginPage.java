@@ -187,7 +187,7 @@ public class LoginPage extends HttpServlet {
             if(redirectPath == null || redirectPath.isBlank()){
                 redirectPath = "home";
             }
-            resp.sendRedirect(redirectPath);
+            resp.sendRedirect(req.getContextPath() + redirectPath);
         }else{
             resp.sendRedirect("login?error=invalid");
         }

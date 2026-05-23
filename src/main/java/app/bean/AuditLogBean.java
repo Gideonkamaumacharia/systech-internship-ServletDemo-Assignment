@@ -3,6 +3,7 @@ package app.bean;
 import app.dao.AuditLogDAO;
 import app.dao.GenericDao;
 import app.model.AuditLog;
+import app.websocket.AuditLogWs;
 import jakarta.annotation.Resource;
 import jakarta.ejb.Singleton;
 import jakarta.enterprise.event.Observes;
@@ -33,6 +34,7 @@ public class AuditLogBean {
             dao.insert(auditLog);
             System.out.println("Audit Log saved: " + auditLog.getActionPerformed());
             context.createProducer().send(auditQueue,auditLog.getActionPerformed());
+                    AuditLogWs.broadcast(auditLog.getActionPerformed());
         } catch (Exception e) {
             System.err.println("Failed to insert Audit Log: " + e.getMessage());
             e.printStackTrace();

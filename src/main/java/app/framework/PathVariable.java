@@ -5,12 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+// Binds a request parameter to a method argument
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface ShowroomForm {
-    String label();
-
-    String method() default "POST";
-
-    //String actionUrl();
+@Target(ElementType.PARAMETER)
+public @interface PathVariable {
+    String value(); // parameter name e.g "id"
 }

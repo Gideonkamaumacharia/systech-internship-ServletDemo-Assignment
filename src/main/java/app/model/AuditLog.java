@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "audit_logs")
-@ShowroomForm(label = "Log", actionUrl = "./logs")
+@ShowroomForm(label = "Log")
 @ShowroomTable(label = "Log", tableUrl = "./applogs", registerUrl = "./logs",listJsp = "audit_logs.jsp",editUrl = "editLog", deleteUrl  = "deleteLog")
 public class AuditLog implements Serializable {
 

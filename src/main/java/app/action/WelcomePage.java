@@ -258,15 +258,21 @@ public class WelcomePage implements Servlet {
 
         out.println("<div class='nav-grid'>");
 
-        out.println("<a href='home' class='nav-item'>");
+        out.println("<a href='" + httpReq.getContextPath() + "/home' class='nav-item'>");
         out.println("<strong>Home Page</strong>");
         out.println("<span>Return to the main dashboard overview.</span>");
         out.println("</a>");
 
-        out.println("<a href='car' class='nav-item'>");
+        out.println("<a href='" + httpReq.getContextPath() + "/app/car/list' class='nav-item'>");
         out.println("<strong>Car Inventory</strong>");
         out.println("<span>Manage showroom vehicles and listings.</span>");
         out.println("</a>");
+
+//        // Form — register a new car
+//        out.println("<a href='app/car/form' class='nav-item'>");
+//        out.println("<strong>Register New Vehicle</strong>");
+//        out.println("<span>Add a new car to the showroom.</span>");
+//        out.println("</a>");
 
         out.println("<a href='user' class='nav-item'>");
         out.println("<strong>Showroom Users</strong>");

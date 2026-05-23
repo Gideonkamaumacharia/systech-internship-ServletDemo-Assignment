@@ -14,11 +14,11 @@ public class UserDAO {
 
     @Inject
     private GenericDao genericDao;
-
-    // Direct EntityManager access for queries that need JPQL
-    // beyond what GenericDao.selectWhere() covers (e.g. joining Showroom).
-    @PersistenceContext
-    private EntityManager em;
+//
+//    // Direct EntityManager access for queries that need JPQL
+//    // beyond what GenericDao.selectWhere() covers (e.g. joining Showroom).
+//    @PersistenceContext
+//    private EntityManager em;
 
     public void insert(User user) {
         genericDao.insert(user);
@@ -45,7 +45,7 @@ public class UserDAO {
      * Navigates the @ManyToOne showroom relationship on User.
      */
     public List<User> findByShowroom(Long showroomId) {
-        return em.createQuery(
+        return genericDao.getEm().createQuery(
                         "SELECT u FROM User u WHERE u.showroom.id = :showroomId", User.class)
                 .setParameter("showroomId", showroomId)
                 .getResultList();

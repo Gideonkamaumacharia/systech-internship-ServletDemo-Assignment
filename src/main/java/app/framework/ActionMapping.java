@@ -5,12 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+// Marks a method as handling a specific request
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface ShowroomForm {
-    String label();
-
-    String method() default "POST";
-
-    //String actionUrl();
+@Target(ElementType.METHOD)
+public @interface ActionMapping {
+    String method() default "GET";  // "GET" or "POST"
+    String path();    // sub-path e.g "/list"
 }

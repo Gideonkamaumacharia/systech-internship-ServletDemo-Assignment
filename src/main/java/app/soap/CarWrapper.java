@@ -1,0 +1,32 @@
+package app.soap;
+
+import app.model.Car;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+import java.io.Serializable;
+import java.util.List;
+
+@XmlRootElement(name = "cars")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class CarWrapper implements Serializable {
+
+    @XmlElement(name = "car")
+    private List<Car> cars;
+
+    public CarWrapper(){}
+
+    public CarWrapper(List<Car> cars){
+        this.cars = cars;
+    }
+
+    public List<Car> getCars() {
+        return cars;
+    }
+
+    public void setCars(List<Car> cars){
+        this.cars = cars;
+    }
+}

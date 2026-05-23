@@ -10,8 +10,8 @@ public class UserActivityMonitor implements HttpSessionAttributeListener {
     public void attributeAdded(HttpSessionBindingEvent event) {
 
         if ("userAuthenticated".equals(event.getName())) {
-            System.out.println("[AUDIT] Security change: A user has LOGGED IN. Session ID: "
-                    + event.getSession().getId());
+            System.out.println("[AUDIT] Security change: A user has LOGGED IN. "
+                    );
         }
     }
 

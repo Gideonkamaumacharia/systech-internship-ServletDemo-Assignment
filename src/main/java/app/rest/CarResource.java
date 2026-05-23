@@ -1,4 +1,4 @@
-package app.action.rest;
+package app.rest;
 
 import app.bean.CarBean;
 import app.bean.UserBean;

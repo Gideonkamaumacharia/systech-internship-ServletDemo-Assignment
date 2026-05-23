@@ -1,4 +1,4 @@
-package app.action.rest;
+package app.rest;
 
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;

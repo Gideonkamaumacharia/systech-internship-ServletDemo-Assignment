@@ -1,6 +1,9 @@
 package app.bean;
 
+import app.dao.BrandDAO;
 import app.dao.CarDAO;
+import app.dao.CategoryDAO;
+import app.dao.ShowroomDAO;
 import app.model.*;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
@@ -20,7 +23,16 @@ public class CarBean {
     private Validate<Car> validator;
 
     @Inject
-    CarDAO dao;
+    private CarDAO dao;
+
+    @Inject
+    private BrandDAO brandDAO;
+
+    @Inject
+    private CategoryDAO categoryDAO;
+
+    @Inject
+    private ShowroomDAO showroomDAO;
 
     @Inject
     private Event<AuditLog> auditLogEvent;
@@ -54,7 +66,19 @@ public class CarBean {
         Car existingCar = dao.findById(updatedCar.getId());
 
         existingCar.setCarModel(updatedCar.getCarModel());
+        existingCar.setEngineType(updatedCar.getEngineType());
+        existingCar.setYear(updatedCar.getYear());
         existingCar.setPrice(updatedCar.getPrice());
+
+//        Brand brand = brandDAO.findById(updatedCar.getBrand().getId());
+//
+//        Category category = categoryDAO.findById(updatedCar.getCategory().getId());
+//
+//        Showroom showroom = showroomDAO.findByShowroomId(updatedCar.getShowroom().getId());
+//
+//        existingCar.setBrand(brand);
+//        existingCar.setCategory(category);
+//        existingCar.setShowroom(showroom);
 
         dao.update(existingCar);
     }

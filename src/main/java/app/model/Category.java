@@ -3,11 +3,15 @@ package app.model;
 import app.framework.*;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import java.io.Serializable;
 import java.util.List;
 
-@ShowroomForm(label = "Add Category", actionUrl = "./category")
+@XmlAccessorType(XmlAccessType.FIELD)
+@ShowroomForm(label = "Add Category")
 @ShowroomTable(label = "Vehicle Categories", tableUrl = "./category_list", registerUrl = "./category",listJsp = "categoryList.jsp",editUrl = "editCategory",
         deleteUrl  = "deleteCategory")
 @Entity
@@ -28,7 +32,8 @@ public class Category implements Serializable {
     @Column
     private String description;
 
-    @JsonbTransient
+    //@JsonbTransient
+    @XmlTransient
     @OneToMany(mappedBy = "category")
     private List<Car> cars;
 

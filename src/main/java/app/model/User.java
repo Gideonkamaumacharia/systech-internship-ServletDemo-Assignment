@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
-@ShowroomForm(label = "Register New User", actionUrl = "./user")
+@ShowroomForm(label = "Register New User")
 @ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "./user",listJsp = "userList.jsp",editUrl = "editUser",
         deleteUrl  = "deleteUser")
 @Entity

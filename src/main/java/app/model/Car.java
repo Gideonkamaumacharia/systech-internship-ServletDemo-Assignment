@@ -3,13 +3,17 @@ package app.model;
 import app.framework.*;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import java.io.Serializable;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "cars")
-@ShowroomForm(label = "Register New Vehicle", actionUrl = "./car")
-@ShowroomTable(label = "Showroom Inventory", tableUrl = "./list", registerUrl = "./car",editUrl = "editCar",
+@ShowroomForm(label = "Register New Vehicle")
+@ShowroomTable(label = "Showroom Car", tableUrl = "./list", registerUrl = "/car/form", editUrl = "editCar",
         deleteUrl  = "deleteCar")
 public class Car implements Serializable {
 
@@ -37,30 +41,36 @@ public class Car implements Serializable {
     @Column
     private Double price;
 
-    @ShowroomFormField(label = "Brand", type = "select", source = Brand.class)
+
     @Transient
     private Long brandId;
 
+    @ShowroomFormField(label = "Brand", type = "select", source = Brand.class)
     @ShowroomTableCol(label = "Brand")
     @ManyToOne(fetch = FetchType.EAGER)
+    @XmlTransient
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    @ShowroomFormField(label = "Category", type = "select", source = Category.class)
+
     @Transient
     private Long categoryId;
 
+    @ShowroomFormField(label = "Category", type = "select", source = Category.class)
     @ShowroomTableCol(label = "Category")
     @ManyToOne(fetch = FetchType.EAGER)
+    @XmlTransient
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ShowroomFormField(label = "Showroom", type = "select", source = Showroom.class)
+
     @Transient
     private Long showroomId;
 
+    @ShowroomFormField(label = "Showroom", type = "select", source = Showroom.class)
     @ShowroomTableCol(label = "Showroom")
     @ManyToOne(fetch = FetchType.EAGER)
+    @XmlTransient
     @JsonbTransient
     @JoinColumn(name = "showroom_id")
     private Showroom showroom;
