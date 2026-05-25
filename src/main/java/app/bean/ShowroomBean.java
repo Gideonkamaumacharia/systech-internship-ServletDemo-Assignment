@@ -13,6 +13,7 @@ import jakarta.inject.Inject;
 
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +45,8 @@ public class ShowroomBean {
         AuditLog auditLog = new AuditLog();
         auditLog.setDetails("CREATE_SHOWROOM");
         auditLog.setActionPerformed("Added showroom: "+ showroom.getLocationName());
-        auditLog.setTimeStamp(new Date());
+        auditLog.setTimeStamp(LocalDateTime.now()
+        );
 
         if(currentUser != null){
             auditLog.setUser(currentUser);
@@ -73,7 +75,8 @@ public class ShowroomBean {
         AuditLog log = new AuditLog();
         log.setActionPerformed("DELETE_SHOWROOM");
         log.setDetails("Deleted : "  + showroom.getLocationName());
-        log.setTimeStamp(new Date());
+        log.setTimeStamp(LocalDateTime.now()
+        );
 
         auditLogEvent.fire(log);
         System.out.println("EVENT FIRED: " + log.getActionPerformed());

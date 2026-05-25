@@ -63,6 +63,10 @@ public class GenericDao {
     public void setEm(EntityManager em) {
         this.em = em;
     }
+
+    public <T> T getReference(Class<T> clazz, Long id) {
+        return em.getReference(clazz, id);
+    }
 }
 
 

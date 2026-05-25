@@ -54,7 +54,7 @@ public class ActionDispatcherServlet extends HttpServlet {
         try {
             // CDI creates the action instance — so @EJB injection still works
             Object actionInstance = CDI.current()
-                    .select(actionMapMatch.getActionMap().getAction())
+                    .select(actionMapMatch.getActionMap().getAction())//CarAction.class
                     .get();
 
             // Bind method parameters automatically
@@ -71,18 +71,15 @@ public class ActionDispatcherServlet extends HttpServlet {
                             .getMethod()
                             .invoke(actionInstance, args);
 
+
             // Handle the response
             if (actionResponse.getResponseText() != null) {
-
                 String text = actionResponse.getResponseText();
 
                 if (text.startsWith("redirect:")) {
-                    String redirectPath =
-                            text.substring("redirect:".length());
+                    String redirectPath = text.substring("redirect:".length());
 
-                    resp.sendRedirect(
-                            req.getContextPath() + redirectPath
-                    );
+                    resp.sendRedirect(req.getContextPath() + redirectPath);
                 } else {
                     resp.setContentType("text/html;charset=UTF-8");
                     resp.getWriter().write(text);
@@ -93,7 +90,7 @@ public class ActionDispatcherServlet extends HttpServlet {
                 String html = showroomFramework.htmlTable(
                         actionResponse.getResponseClazz(),//Car.class
                         actionResponse.getResponseDataList(), //list of cars
-                        req.getContextPath()
+                        req.getContextPath()//showroom
                 );
                 resp.setContentType("text/html;charset=UTF-8");
                 resp.getWriter().write(html);

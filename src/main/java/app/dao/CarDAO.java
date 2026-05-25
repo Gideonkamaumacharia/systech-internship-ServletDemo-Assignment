@@ -29,24 +29,21 @@ public class CarDAO {
     }
 
     public void insert(Car car) {
-        Long showroomId = car.getShowroomId();
-        Showroom showroom =
-                genericDao.selectById(Showroom.class,showroomId);
+        Long showroomId = car.getShowroom().getId();
+
+        Showroom showroom = genericDao.selectById(Showroom.class,showroomId);
 
         car.setShowroom(showroom);
 
-        Long brandId = car.getBrandId();
-        app.model.Brand brand =
-                genericDao.selectById(Brand.class,brandId);
+        Long brandId = car.getBrand().getId();
+        Brand brand = genericDao.selectById(Brand.class,brandId);
 
         car.setBrand(brand);
 
-        Long categoryId = car.getCategoryId();
-        Category category =
-                genericDao.selectById(Category.class,categoryId);
+        Long categoryId = car.getCategory().getId();
+        Category category = genericDao.selectById(Category.class,categoryId);
 
         car.setCategory(category);
-
 
         genericDao.insert(car); }
 

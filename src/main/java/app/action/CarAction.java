@@ -42,7 +42,8 @@ public class CarAction {
         carBean.create(car, user);
         return ActionResponse.ofRedirect("/app/car/list");
     }
-
+    //Map<String, String[]>
+//"carModel" -> ["Audi  Q8"]
     @ActionMapping(path = "/car/edit/{id}", method = "GET")
     public ActionResponse edit(@PathVariable("id") Long id,HttpServletRequest req) throws Exception {
         Car car = carBean.findById(id);
@@ -54,7 +55,6 @@ public class CarAction {
     public ActionResponse update(HttpServletRequest req) throws Exception {
         Car car = showroomFramework.serializeForm(req.getParameterMap(), Car.class);
         carBean.update(car);
-        System.out.println("CAR TO UPDATE ID: "+ car.getId());
         return ActionResponse.ofRedirect("/app/car/list");
     }
 

@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 public @interface ShowroomTable {
     String label();
     String tableUrl();
-    String registerUrl();
+    String registerUrl() default "";
     String listJsp() default "list.jsp";
     String editUrl();
     String deleteUrl();

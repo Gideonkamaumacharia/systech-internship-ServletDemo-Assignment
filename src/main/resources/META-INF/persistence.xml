@@ -22,6 +22,9 @@
             <property name="hibernate.format_sql"
                       value="true"/>
 
+            <property name="hibernate.dialect"
+                      value="org.hibernate.dialect.MySQLDialect"/>
+
         </properties>
 
     </persistence-unit>

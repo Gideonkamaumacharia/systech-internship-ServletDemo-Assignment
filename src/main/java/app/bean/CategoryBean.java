@@ -2,6 +2,7 @@ package app.bean;
 
 import app.dao.CategoryDAO;
 import app.model.AuditLog;
+import app.model.Brand;
 import app.model.Category;
 import app.model.User;
 import app.utility.validation.Validate;
@@ -10,6 +11,7 @@ import jakarta.ejb.Stateless;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +41,8 @@ public class CategoryBean {
         AuditLog log = new AuditLog();
         log.setActionPerformed("CREATE_CATEGORY");
         log.setDetails("Added Category: " + category.getName() + " : " + category.getDescription());
-        log.setTimeStamp(new Date());
+        log.setTimeStamp(LocalDateTime.now()
+        );
 
         if(currentUser != null){
             log.setUser(currentUser);
@@ -67,9 +70,24 @@ public class CategoryBean {
         AuditLog log = new AuditLog();
         log.setActionPerformed("DELETE_CAR");
         log.setDetails("Deleted " + category + " category.");
-        log.setTimeStamp(new Date());
+        log.setTimeStamp(LocalDateTime.now()
+        );
 
         auditLogEvent.fire(log);
         System.out.println("EVENT FIRED: " + log.getActionPerformed());
+    }
+
+    public Category findById(Long id){
+        return dao.findById(id);
+    }
+
+    public void update(Category updatedCategory){
+        Category existingCategory = dao.findById(updatedCategory.getId());
+
+        existingCategory.setName(updatedCategory.getName());
+        existingCategory.setDescription(updatedCategory.getDescription());
+
+
+        dao.update(updatedCategory);
     }
 }

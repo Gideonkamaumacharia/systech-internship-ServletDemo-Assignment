@@ -3,6 +3,8 @@ package app.model;
 import app.framework.*;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -14,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "brands")
 @ShowroomForm(label = "Brand")
-@ShowroomTable(label = "Car Brands", tableUrl = "./brand_list", registerUrl = "./brand",listJsp = "brand.jsp",editUrl = "editBrand",deleteUrl = "deleteBrand")
+@ShowroomTable(label = "Car Brands", tableUrl = "./brand_list", registerUrl = "/brand/form",listJsp = "brand.jsp",editUrl = "editBrand",deleteUrl = "deleteBrand")
 public class Brand implements Serializable {
 
     @Id
@@ -23,7 +25,9 @@ public class Brand implements Serializable {
 
     @ShowroomFormField(label = "Brand name", placeholder = "Enter car brand")
     @ShowroomTableCol(label = "Brand")
-    @Column
+    @NotBlank
+    @Size(max = 100)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @ShowroomFormField(label = "Country Of Origin", placeholder = "Enter country of origin")

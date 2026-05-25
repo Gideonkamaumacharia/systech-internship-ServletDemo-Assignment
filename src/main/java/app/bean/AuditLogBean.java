@@ -11,6 +11,7 @@ import jakarta.inject.Inject;
 import jakarta.jms.JMSContext;
 import jakarta.jms.Queue;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -28,13 +29,14 @@ public class AuditLogBean {
 
     public void save(@Observes AuditLog auditLog){
         if (auditLog.getTimeStamp() == null) {
-            auditLog.setTimeStamp(new Date());
+            auditLog.setTimeStamp(LocalDateTime.now()
+            );
         }
         try {
             dao.insert(auditLog);
             System.out.println("Audit Log saved: " + auditLog.getActionPerformed());
             context.createProducer().send(auditQueue,auditLog.getActionPerformed());
-                    AuditLogWs.broadcast(auditLog.getActionPerformed());
+                    AuditLogWs.broadcast(auditLog.getDetails());
         } catch (Exception e) {
             System.err.println("Failed to insert Audit Log: " + e.getMessage());
             e.printStackTrace();

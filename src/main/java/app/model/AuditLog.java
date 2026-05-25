@@ -5,12 +5,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Table(name = "audit_logs")
-@ShowroomForm(label = "Log")
-@ShowroomTable(label = "Log", tableUrl = "./applogs", registerUrl = "./logs",listJsp = "audit_logs.jsp",editUrl = "editLog", deleteUrl  = "deleteLog")
+@ShowroomTable(label = "Log", tableUrl = "./applogs",listJsp = "audit_logs.jsp",editUrl = "editLog", deleteUrl  = "deleteLog")
 public class AuditLog implements Serializable {
 
     @Id
@@ -19,29 +19,33 @@ public class AuditLog implements Serializable {
 
     @ShowroomFormField(label = "Action", placeholder = "What action")
     @ShowroomTableCol(label = "Action")
-    @Column(name = "action_performed")
+    @Column(name = "action_performed", updatable = false)
     private String actionPerformed;
 
     @ShowroomFormField(label = "Time", placeholder = "Time")
     @ShowroomTableCol(label = "Time")
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "time_stamp")
-    private Date timeStamp;
+    @Column(name = "time_stamp", nullable = false, updatable = false)
+    private LocalDateTime timeStamp;
+
+    @PrePersist
+    protected void onPrePersist() {
+        this.timeStamp = LocalDateTime.now();  // system clock, not caller
+    }
 
     @ShowroomFormField(label = "Details", placeholder = "Enter the details")
     @ShowroomTableCol(label = "Details")
-    @Column
+    @Column( updatable = false)
     private String details;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", updatable = false)
     @ShowroomTableCol(label = "User")
     private User user;
 
 
     public AuditLog(){}
 
-    public AuditLog(String actionPerformed,Date timeStamp,String details){
+    public AuditLog(String actionPerformed,LocalDateTime timeStamp,String details){
         this.actionPerformed = actionPerformed;
         this.timeStamp = timeStamp;
         this.details = details;
@@ -64,11 +68,11 @@ public class AuditLog implements Serializable {
     }
 
 
-    public Date getTimeStamp() {
+    public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(Date timeStamp) {
+    public void setTimeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 

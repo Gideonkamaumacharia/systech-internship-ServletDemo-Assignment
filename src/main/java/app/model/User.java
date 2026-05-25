@@ -4,13 +4,14 @@ import app.framework.ShowroomForm;
 import app.framework.ShowroomFormField;
 import app.framework.ShowroomTable;
 import app.framework.ShowroomTableCol;
+import app.model.enums.UserRole;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.List;
 
 @ShowroomForm(label = "Register New User")
-@ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "./user",listJsp = "userList.jsp",editUrl = "editUser",
+@ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "/user/form",listJsp = "userList.jsp",editUrl = "editUser",
         deleteUrl  = "deleteUser")
 @Entity
 @Table(name = "users")
@@ -22,18 +23,18 @@ public class User implements Serializable {
 
     @ShowroomFormField(label = "UserName", placeholder = "Enter userName")
     @ShowroomTableCol(label = "User Name")
-    @Column(name = "user_name",nullable = false)
+    @Column(name = "user_name",nullable = false,unique = true, length = 50)
     private String username;
 
     @ShowroomFormField(label = "Password", placeholder = "Enter password")
-    @ShowroomTableCol(label = "Password")
-    @Column(nullable = false)
-    private String password;
+    @Column(name = "password_hash", nullable = false)
+    private String passwordHash;
 
     @ShowroomFormField(label = "Role", placeholder = "Role")
     @ShowroomTableCol(label = "Role")
-    @Column
-    private String role;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     //many logs to one user
     @OneToMany(mappedBy = "user")
@@ -77,19 +78,24 @@ public class User implements Serializable {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
+    }
+
+    @Override
+    public String toString() {
+        return username;
     }
 }

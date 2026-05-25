@@ -1,24 +1,20 @@
 package app.bean;
 
-import app.dao.GenericDao;
+
 import app.dao.UserDAO;
 import app.model.AuditLog;
-import app.model.Car;
-import app.model.Showroom;
 import app.model.User;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
 import jakarta.ejb.Stateless;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
-import org.eclipse.tags.shaded.org.apache.xpath.objects.XNull;
 
-import java.sql.SQLDataException;
-import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import org.mindrot.jbcrypt.BCrypt;
 
 @Stateless
 public class UserBean {
@@ -40,12 +36,19 @@ public class UserBean {
             throw new IllegalArgumentException("Invalid car data");
         }
 
+        String rawPassword = user.getPasswordHash();
+
+        String hashedPassword = BCrypt.hashpw(rawPassword,BCrypt.gensalt());
+
+        user.setPasswordHash(hashedPassword);
+
         dao.insert(user);
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("REGISTER_USER");
         log.setDetails("Register User: " + user.getUsername() + " as : " + user.getRole());
-        log.setTimeStamp(new Date());
+        log.setTimeStamp(LocalDateTime.now()
+        );
 
         if(user != null){
             log.setUser(user);
@@ -60,18 +63,25 @@ public class UserBean {
         System.out.println("UserBean : createUser() called");
     }
 
-    public List<User> getUsers(String showroomId){
+//    public List<User> getUsers(String showroomId){
+//        List<User> data;
+//
+//
+//            if( showroomId != null && !showroomId.isEmpty()){
+//                data = dao.findByShowroom(Long.parseLong(showroomId));
+//            }else{
+//                data = dao.findAll();
+//            }
+//
+//            return data;
+//
+//    }
+
+    public List<User> getUsers(){
         List<User> data;
+            data = dao.findAll();
 
-
-            if( showroomId != null && !showroomId.isEmpty()){
-                data = dao.findByShowroom(Long.parseLong(showroomId));
-            }else{
-                data = dao.findAll();
-            }
-
-            return data;
-
+        return data;
     }
 
     public User findByUsername(String username){
@@ -93,7 +103,8 @@ public class UserBean {
         AuditLog log = new AuditLog();
         log.setActionPerformed("DELETE_USER");
         log.setDetails("Delete User: " + user.getUsername());
-        log.setTimeStamp(new Date());
+        log.setTimeStamp(LocalDateTime.now()
+        );
 
         if(user != null){
             log.setUser(user);

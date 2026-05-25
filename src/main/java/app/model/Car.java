@@ -3,11 +3,13 @@ package app.model;
 import app.framework.*;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
@@ -23,23 +25,35 @@ public class Car implements Serializable {
 
     @ShowroomFormField(label = "Car Model",name = "carModel", placeholder = "Enter car name")
     @ShowroomTableCol(label = "Model")
+    @NotBlank
+    @Size(max = 100)
+    @Pattern(regexp = "^[\\w\\s\\-]+$", message = "Invalid characters in model name")
     @Column(name = "car_model",nullable = false)
     private String carModel;
 
     @ShowroomFormField(label = "Engine Specification",name = "engineType", placeholder = "Enter engine type")
     @ShowroomTableCol(label = "Engine Type")
+    @NotBlank
+    @Size(max = 100)
+    @Pattern(regexp = "^[\\w\\s\\-/]+$")
     @Column(name = "engine_type",nullable = false)
     private String engineType;
 
     @ShowroomFormField(label = "Year",name = "year", placeholder = "Enter engine type")
     @ShowroomTableCol(label = "Year")
+    @NotNull
+    @Min(1886)
+    @Max(2100)
     @Column
     private Integer year;
 
     @ShowroomFormField(label = "Price",name = "price", placeholder = "Enter price")
     @ShowroomTableCol(label = "Price")
+    @NotNull
+    @DecimalMin("0.01")
+    @Digits(integer = 10, fraction = 2)//10 digits before decimal points and 2 after
     @Column
-    private Double price;
+    private BigDecimal price;
 
 
     @Transient
@@ -72,7 +86,7 @@ public class Car implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @XmlTransient
     @JsonbTransient
-    @JoinColumn(name = "showroom_id")
+    @JoinColumn(name = "showroom_id", nullable = false)
     private Showroom showroom;
 
 
@@ -128,11 +142,11 @@ public class Car implements Serializable {
         this.year = year;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

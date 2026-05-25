@@ -6,6 +6,8 @@ import jakarta.ejb.EJB;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import org.mindrot.jbcrypt.BCrypt;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -137,6 +139,26 @@ public class LoginPage extends HttpServlet {
         out.println("<button type='submit'>Enter Showroom</button>");
         out.println("</form>");
 
+        out.println("<div style='margin-top:15px;'>");
+
+        out.println("<a href='" + req.getContextPath() + "/home' "
+                + "style='"
+                + "display:block;"
+                + "width:100%;"
+                + "padding:11px;"
+                + "border-radius:12px;"
+                + "background:rgba(255,255,255,0.05);"
+                + "border:1px solid rgba(255,255,255,0.08);"
+                + "color:#cbd5e1;"
+                + "text-decoration:none;"
+                + "font-size:0.9rem;"
+                + "transition:0.3s ease;"
+                + "'>"
+                + "&#8962; Return to Dashboard"
+                + "</a>");
+
+        out.println("</div>");
+
         out.println("</div></body></html>");
     }
 
@@ -172,11 +194,11 @@ public class LoginPage extends HttpServlet {
             return;
         }
 
-        String systemPass = user.getPassword();
-        String userPass = password;
+        String storedPassword = user.getPasswordHash();
 
-        if(systemPass != null && systemPass.equals(userPass)){
+        if(storedPassword != null && BCrypt.checkpw(password,storedPassword)){
             HttpSession session = req.getSession(true);
+
             session.setAttribute("userAuthenticated",true);
 
             session.setAttribute("activeUser",user);
@@ -184,11 +206,16 @@ public class LoginPage extends HttpServlet {
             session.setAttribute("UserActualName",user.getUsername());
 
             String redirectPath = req.getParameter("redirectPath");
+
             if(redirectPath == null || redirectPath.isBlank()){
                 redirectPath = "home";
             }
             resp.sendRedirect(req.getContextPath() + redirectPath);
-        }else{
+
+        }
+
+
+        else{
             resp.sendRedirect("login?error=invalid");
         }
     }

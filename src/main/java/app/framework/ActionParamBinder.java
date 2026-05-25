@@ -10,14 +10,12 @@ import java.util.Map;
 
 public class ActionParamBinder {
 
-    public static Object[] bind(ActionMap actionMap,
-                                HttpServletRequest req,
-                                HttpServletResponse resp,
-                                Map<String, String> pathVariables) {
+    public static Object[] bind(ActionMap actionMap, HttpServletRequest req,
+                                HttpServletResponse resp, Map<String, String> pathVariables) {
 
-        Method      method = actionMap.getMethod();
+        Method method = actionMap.getMethod();
         Parameter[] params = method.getParameters();
-        Object[]    args   = new Object[params.length];
+        Object[] args   = new Object[params.length];
 
         for (int i = 0; i < params.length; i++) {
             Parameter param = params[i];

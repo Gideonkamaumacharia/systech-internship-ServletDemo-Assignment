@@ -1,6 +1,7 @@
 package app.utility.validation;
 
 import app.model.User;
+import app.model.enums.UserRole;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -22,14 +23,16 @@ public class UserValidator implements Validate<User> {
         if (user == null) return false;
 
         return helper.isValidText(user.getUsername()) &&
-                helper.isValidText(user.getPassword()) &&
-                user.getPassword().length() >= 4 &&
-                helper.isValidText(user.getRole());
+                helper.isValidText(user.getPasswordHash()) &&
+                user.getPasswordHash().length() >= 4 &&
+                user.getRole() != null;
+
     }
     public boolean isAdmin(User user) {
         return user != null &&
                 user.getRole() != null &&
-                user.getRole().equalsIgnoreCase("ADMIN");
+                user.getRole() == UserRole.ADMIN;
+
     }
 
 }

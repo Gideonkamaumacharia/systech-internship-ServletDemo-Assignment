@@ -268,36 +268,43 @@ public class WelcomePage implements Servlet {
         out.println("<span>Manage showroom vehicles and listings.</span>");
         out.println("</a>");
 
-//        // Form — register a new car
-//        out.println("<a href='app/car/form' class='nav-item'>");
-//        out.println("<strong>Register New Vehicle</strong>");
-//        out.println("<span>Add a new car to the showroom.</span>");
-//        out.println("</a>");
-
-        out.println("<a href='user' class='nav-item'>");
-        out.println("<strong>Showroom Users</strong>");
+        out.println("<a href='" + httpReq.getContextPath() + "/app/user/list' class='nav-item'>");
+        out.println("<strong>Users</strong>");
         out.println("<span>View and manage system users.</span>");
         out.println("</a>");
 
-        out.println("<a href='brand' class='nav-item'>");
+        // In WelcomePage — update the audit log link
+        out.println("<a href='auditlog_feeds.jsp' class='nav-item'>");
+        out.println("<strong>Live Audit Feed</strong>");
+        out.println("<span>Real-time activity stream.</span>");
+        out.println("</a>");
+
+// Keep the list link separate for viewing stored logs
+        out.println("<a href='" + httpReq.getContextPath() + "/app/auditlog/list' class='nav-item'>");
+        out.println("<strong>Audit Log History</strong>");
+        out.println("<span>Browse stored audit records.</span>");
+        out.println("</a>");
+
+
+        out.println("<a href='" + httpReq.getContextPath() + "/app/brand/list' class='nav-item'>");
         out.println("<strong>Vehicle Brands</strong>");
         out.println("<span>Manage luxury automotive brands.</span>");
         out.println("</a>");
 
-        out.println("<a href='category' class='nav-item'>");
+        out.println("<a href='" + httpReq.getContextPath() + "/app/category/list' class='nav-item'>");
         out.println("<strong>Vehicle Categories</strong>");
         out.println("<span>Organize inventory classifications.</span>");
         out.println("</a>");
 
-        out.println("<a href='showroom' class='nav-item'>");
+        out.println("<a href='" + httpReq.getContextPath() + "/app/showroom/list' class='nav-item'>");
         out.println("<strong>Showrooms</strong>");
         out.println("<span>Manage physical showroom locations.</span>");
         out.println("</a>");
 
-        out.println("<a href='applogs' class='nav-item'>");
-        out.println("<strong>System Audit Logs</strong>");
-        out.println("<span>Track activities and monitor operations.</span>");
-        out.println("</a>");
+//        out.println("<a href='applogs' class='nav-item'>");
+//        out.println("<strong>System Audit Logs</strong>");
+//        out.println("<span>Track activities and monitor operations.</span>");
+//        out.println("</a>");
 
         out.println("</div>");
         out.println("</div>");

@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Table(name = "showrooms")
 @ShowroomForm(label = "Register Showroom")
-@ShowroomTable(label = "Branch Locations", tableUrl = "./showroom_list", registerUrl = "./showroom",listJsp = "showroomList.jsp" ,editUrl = "editShowroom",
+@ShowroomTable(label = "Branch Locations", tableUrl = "./showroom_list", registerUrl = "/showroom/form",listJsp = "showroomList.jsp" ,editUrl = "editShowroom",
         deleteUrl  = "deleteShowroom")
 public class Showroom implements Serializable {
 
@@ -24,17 +24,17 @@ public class Showroom implements Serializable {
 
     @ShowroomFormField(label = "Location", placeholder = "e.g. Nairobi CBD")
     @ShowroomTableCol(label = "Location")
-    @Column(name = "location_name",nullable = false)
+    @Column(name = "location_name",nullable = false,unique = true)
     private String locationName;
 
 
-    @ShowroomFormField(label = "Manager", type = "select", source = User.class)
+    @ShowroomFormField(label = "Manager", type = "select", source = User.class, name = "managerId")
     @Transient
     private Long managerId;
 
     @ShowroomTableCol(label = "Manager")
     @OneToOne
-    @JoinColumn(name = "manager_id",nullable = false)
+    @JoinColumn(name = "manager_id",nullable = false,unique = true)
     private User manager;
 
     @ShowroomFormField(label = "Capacity", placeholder = "Enter Capacity")

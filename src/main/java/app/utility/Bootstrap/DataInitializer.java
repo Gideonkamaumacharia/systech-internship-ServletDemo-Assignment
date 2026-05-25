@@ -2,12 +2,14 @@ package app.utility.Bootstrap;
 
 import app.dao.GenericDao;
 import app.model.User;
+import app.model.enums.UserRole;
 import jakarta.annotation.PostConstruct;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.mindrot.jbcrypt.BCrypt;
 
 @Singleton
 @Startup
@@ -31,8 +33,8 @@ public class DataInitializer {
 
             User admin = new User();
             admin.setUsername("admin");
-            admin.setPassword("admin123");
-            admin.setRole("ADMIN");
+            admin.setPasswordHash( BCrypt.hashpw("admin123", BCrypt.gensalt()));
+            admin.setRole(UserRole.ADMIN);;
 
             dao.insert(admin);
 

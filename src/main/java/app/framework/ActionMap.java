@@ -4,10 +4,10 @@ import java.lang.reflect.Method;
 
 public class ActionMap {
 
-    private final String path;
-    private final String httpMethod;
+    private final String path;//  "/car/form"  ->"/car/create"
+    private final String httpMethod;// POST
     private final Class<?> action;       // eg CarAction.class
-    private final Method method;         // eg the list() method
+    private final Method method;         // eg the create() method
 
     public ActionMap(String path,
                      String httpMethod,

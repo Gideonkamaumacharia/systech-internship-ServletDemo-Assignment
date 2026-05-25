@@ -57,8 +57,7 @@ public class ActionRegistry {
         }
     }
 
-    public static ActionMapMatch findMatch(String requestPath,
-                                           String httpMethod) {
+    public static ActionMapMatch findMatch(String requestPath, String httpMethod) {
         for (ActionMap map : registry) {
 
             Map<String, String> pathVariables = matches(map.getPath(), requestPath);

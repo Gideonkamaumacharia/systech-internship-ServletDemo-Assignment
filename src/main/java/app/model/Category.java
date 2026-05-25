@@ -3,6 +3,8 @@ package app.model;
 import app.framework.*;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlTransient;
@@ -12,7 +14,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @ShowroomForm(label = "Add Category")
-@ShowroomTable(label = "Vehicle Categories", tableUrl = "./category_list", registerUrl = "./category",listJsp = "categoryList.jsp",editUrl = "editCategory",
+@ShowroomTable(label = "Vehicle Categories", tableUrl = "./category_list", registerUrl = "/category/form",listJsp = "categoryList.jsp",editUrl = "editCategory",
         deleteUrl  = "deleteCategory")
 @Entity
 @Table(name = "categories")
@@ -24,7 +26,9 @@ public class Category implements Serializable {
 
     @ShowroomFormField(label = "Category Name", placeholder = "e.g. SUV")
     @ShowroomTableCol(label = "Category")
-    @Column
+    @NotBlank
+    @Size(max = 100)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @ShowroomFormField(label = "Description ", placeholder = "Description")

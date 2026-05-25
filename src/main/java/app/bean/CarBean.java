@@ -12,6 +12,7 @@ import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -43,12 +44,14 @@ public class CarBean {
             throw new IllegalArgumentException("Invalid car data");
         }
 
+        Showroom showroom = showroomDAO.findByShowroomId(car.getShowroom().getId());
+
         dao.insert(car);
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("CREATE_CAR");
-        log.setDetails("Added model: " + car.getCarModel() + " to : " + car.getShowroom().getLocationName());
-        log.setTimeStamp(new Date());
+        log.setDetails("Added model: " + car.getCarModel() + " to : " + showroom.getLocationName());
+        log.setTimeStamp(LocalDateTime.now());
 
         if(currentUser != null){
             log.setUser(currentUser);
@@ -70,16 +73,6 @@ public class CarBean {
         existingCar.setYear(updatedCar.getYear());
         existingCar.setPrice(updatedCar.getPrice());
 
-//        Brand brand = brandDAO.findById(updatedCar.getBrand().getId());
-//
-//        Category category = categoryDAO.findById(updatedCar.getCategory().getId());
-//
-//        Showroom showroom = showroomDAO.findByShowroomId(updatedCar.getShowroom().getId());
-//
-//        existingCar.setBrand(brand);
-//        existingCar.setCategory(category);
-//        existingCar.setShowroom(showroom);
-
         dao.update(existingCar);
     }
 
@@ -91,7 +84,8 @@ public class CarBean {
         AuditLog log = new AuditLog();
         log.setActionPerformed("DELETE_CAR");
         log.setDetails("Deleted a car: " + car.getCarModel() + " from : " + car.getShowroom().getLocationName());
-        log.setTimeStamp(new Date());
+        log.setTimeStamp(LocalDateTime.now()
+        );
 
         auditLogEvent.fire(log);
         System.out.println("EVENT FIRED: " + log.getActionPerformed());
