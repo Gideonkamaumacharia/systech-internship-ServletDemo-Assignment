@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlTransient;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,8 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "showrooms")
 @ShowroomForm(label = "Register Showroom")
-@ShowroomTable(label = "Branch Locations", tableUrl = "./showroom_list", registerUrl = "/showroom/form",listJsp = "showroomList.jsp" ,editUrl = "editShowroom",
-        deleteUrl  = "deleteShowroom")
+@ShowroomTable(label = "Branch Locations", tableUrl = "./showroom_list", registerUrl = "/showroom/form",listJsp = "showroomList.jsp")
 public class Showroom implements Serializable {
 
     @Id
@@ -39,6 +40,7 @@ public class Showroom implements Serializable {
 
     @ShowroomFormField(label = "Capacity", placeholder = "Enter Capacity")
     @ShowroomTableCol(label = "Capacity")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @Column(name = "capacity",nullable = false)
     private int capacity;
 

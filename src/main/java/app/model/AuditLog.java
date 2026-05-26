@@ -6,11 +6,12 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "audit_logs")
-@ShowroomTable(label = "Log", tableUrl = "./applogs",listJsp = "audit_logs.jsp",editUrl = "editLog", deleteUrl  = "deleteLog")
+@ShowroomTable(label = "Log", tableUrl = "./applogs",listJsp = "audit_logs.jsp")
 public class AuditLog implements Serializable {
 
     @Id
@@ -39,6 +40,7 @@ public class AuditLog implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "user_id", updatable = false)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     @ShowroomTableCol(label = "User")
     private User user;
 

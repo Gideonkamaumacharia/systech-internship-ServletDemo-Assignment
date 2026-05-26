@@ -11,8 +11,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @ShowroomForm(label = "Register New User")
-@ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "/user/form",listJsp = "userList.jsp",editUrl = "editUser",
-        deleteUrl  = "deleteUser")
+@ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "/user/form",listJsp = "userList.jsp")
 @Entity
 @Table(name = "users")
 public class User implements Serializable {
@@ -26,7 +25,7 @@ public class User implements Serializable {
     @Column(name = "user_name",nullable = false,unique = true, length = 50)
     private String username;
 
-    @ShowroomFormField(label = "Password", placeholder = "Enter password")
+    @ShowroomFormField(label = "Password", placeholder = "Enter password",editIgnore=true)
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
@@ -43,7 +42,7 @@ public class User implements Serializable {
 
     //one showroom many users
     @ManyToOne
-    @JoinColumn(name = "showroom_id")
+    @JoinColumn(name = "showroom_id",nullable = true)
     private Showroom showroom;
 
     public List<AuditLog> getLogs() {

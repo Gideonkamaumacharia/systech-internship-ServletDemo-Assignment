@@ -12,6 +12,5 @@ public @interface ShowroomTable {
     String tableUrl();
     String registerUrl() default "";
     String listJsp() default "list.jsp";
-    String editUrl();
-    String deleteUrl();
+
 }

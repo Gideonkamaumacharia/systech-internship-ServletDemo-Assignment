@@ -17,4 +17,6 @@ public @interface ShowroomFormField {
     String type() default "text";
 
     Class<?> source() default Object.class;
+
+    boolean editIgnore() default false;
 }

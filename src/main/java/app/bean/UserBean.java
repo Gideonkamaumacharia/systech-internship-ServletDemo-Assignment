@@ -3,6 +3,7 @@ package app.bean;
 
 import app.dao.UserDAO;
 import app.model.AuditLog;
+import app.model.Car;
 import app.model.User;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import jakarta.transaction.Transactional;
 import org.mindrot.jbcrypt.BCrypt;
 
 @Stateless
@@ -96,9 +99,10 @@ public class UserBean {
         }return null;
     }
 
+
     public void remove(Long id){
         User user = dao.findById(id);
-        dao.delete(id);
+        if (user == null) return;
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("DELETE_USER");
@@ -106,18 +110,29 @@ public class UserBean {
         log.setTimeStamp(LocalDateTime.now()
         );
 
-        if(user != null){
-            log.setUser(user);
-        }else {
-            log.setDetails(log.getDetails() + " (Action by Anonymous/System)");
-        }
-
+//        if(user != null){
+//            log.setUser(user);
+//        }else {
+//            log.setDetails(log.getDetails() + " (Action by Anonymous/System)");
+//        }
+//@TransactionalAttribute(REQUIRED)
         auditLogEvent.fire(log);
         System.out.println("EVENT FIRED: " + log.getActionPerformed());
 
     }
 
     public User findById(Long id){
-       return dao.findById(id);
+
+        return dao.findById(id);
+    }
+
+    public void update(User updatedUser){
+        User existingUser = dao.findById(updatedUser.getId());
+
+        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setRole(updatedUser.getRole());
+
+
+        dao.update(existingUser);
     }
 }

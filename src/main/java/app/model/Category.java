@@ -14,8 +14,7 @@ import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @ShowroomForm(label = "Add Category")
-@ShowroomTable(label = "Vehicle Categories", tableUrl = "./category_list", registerUrl = "/category/form",listJsp = "categoryList.jsp",editUrl = "editCategory",
-        deleteUrl  = "deleteCategory")
+@ShowroomTable(label = "Vehicle Categories", tableUrl = "./category_list", registerUrl = "/category/form",listJsp = "categoryList.jsp")
 @Entity
 @Table(name = "categories")
 public class Category implements Serializable {

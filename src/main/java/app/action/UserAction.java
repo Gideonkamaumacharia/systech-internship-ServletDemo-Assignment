@@ -1,10 +1,7 @@
 package app.action;
 
 import app.bean.UserBean;
-import app.framework.ActionController;
-import app.framework.ActionMapping;
-import app.framework.ActionResponse;
-import app.framework.ShowroomFramework;
+import app.framework.*;
 import app.model.Car;
 import app.model.User;
 import jakarta.ejb.EJB;
@@ -42,6 +39,27 @@ public class UserAction {
                                  HttpSession session) throws Exception {
         User user  = showroomFramework.serializeForm(req.getParameterMap(), User.class);
         userBean.create(user);
+        return ActionResponse.ofRedirect("/app/user/list");
+    }
+
+    @ActionMapping(path = "/user/edit/{id}", method = "GET")
+    public ActionResponse edit(@PathVariable("id") Long id,
+                               HttpServletRequest req) throws Exception {
+        User user = userBean.findById(id);
+        String html = showroomFramework.htmlEditForm(User.class, user, req.getContextPath());
+        return ActionResponse.ofHtml(html);
+    }
+
+    @ActionMapping(path = "/user/update", method = "POST")
+    public ActionResponse update(HttpServletRequest req) throws Exception {
+        User user = showroomFramework.serializeForm(req.getParameterMap(), User.class);
+        userBean.update(user);
+        return ActionResponse.ofRedirect("/app/user/list");
+    }
+
+    @ActionMapping(path = "/user/delete/{id}", method = "POST")
+    public ActionResponse delete(@PathVariable("id") Long id) throws Exception {
+        userBean.remove(id);
         return ActionResponse.ofRedirect("/app/user/list");
     }
 }

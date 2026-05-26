@@ -27,67 +27,7 @@ public class ShowroomFramework {
     @Inject
     GenericDao dao;
 
-//    public void htmlForm(PrintWriter writer, Class<?> clazz){
-//
-//        if (!clazz.isAnnotationPresent(ShowroomForm.class))
-//            return;
-//
-//        ShowroomForm formAnnot = clazz.getAnnotation(ShowroomForm.class);
-//
-//        writer.println("<h2>" + formAnnot.label() + "</h2>");
-//        writer.println("<form method='" + formAnnot.method() + "' action='" + formAnnot.actionUrl() + "'>");
-//
-//        for (Field field : clazz.getDeclaredFields()) {
-//            if (!field.isAnnotationPresent(ShowroomFormField.class))
-//                continue;
-//
-//            ShowroomFormField fieldInfo = field.getAnnotation(ShowroomFormField.class);
-//            String fieldName = fieldInfo.name().isEmpty() ? field.getName() :  fieldInfo.name();
-//            writer.println("<label>" + fieldInfo.label() + ":</label>");
-//
-//            if("select".equalsIgnoreCase(fieldInfo.type()) && fieldInfo.source() != Object.class){
-//                //writer.println("<select name='" + fieldName + "'>");
-//                List<?> options = dao.selectAll(fieldInfo.source());
-//
-//                writer.println("<select name='" + (fieldInfo.name().isEmpty() ? field.getName() : fieldInfo.name()) + "'>");
-//                writer.println("<option value=''>-- Select --</option>");
-//                if (options != null){
-//                    for (Object opt: options){
-//                        Object id = getFieldValue(opt, "id");
-//                        Object label = getDisplayLabel(opt);
-//                        writer.println("<option value='" + id + "'>" + label + "</option>");
-//                    }
-//                }
-//                writer.println("</select>");
-//            } else {
-//                writer.println("<input type='text' name='"
-//                        + (fieldInfo.name().isEmpty()? field.getName() : fieldInfo.name()) + "' placeholder='Enter " +
-//                        fieldInfo.placeholder() + "' required />");
-//            }
-//
-//        }
-//
-//        writer.println("<button type='submit'>Register</button>");
-//        writer.println("</form>");
-//    }
-//
-////    public String htmlForm(Class<?> clazz) {
-////
-////        StringWriter stringWriter = new StringWriter();
-////        PrintWriter printWriter   = new PrintWriter(stringWriter);
-////
-////        htmlForm(printWriter, clazz);  // reuses your existing logic untouched
-////
-////        return stringWriter.toString();
-////    }
-//
-//    // Original — now just delegates to the contextPath-aware version
-//    public void htmlForm(PrintWriter writer, Class<?> clazz, String contextPath) {
-//        String html = htmlForm(clazz, contextPath);
-//        writer.println(html);
-//    }
 
-    // Add this overload to ShowroomFramework that accepts the context path
 public String htmlForm(Class<?> clazz, String contextPath) {
 
     if (!clazz.isAnnotationPresent(ShowroomForm.class))
@@ -198,7 +138,13 @@ public String htmlForm(Class<?> clazz, String contextPath) {
 
             List<?> options = dao.selectAll(fieldInfo.source());
 
-            writer.println("<select class='enterprise-select' " + "name='" + fieldName + ".id'>");
+            if (field.getType() == Long.class || field.getType() == long.class) {
+                // It is already an id field — use fieldName directly
+                writer.println("<select class='enterprise-select' name='" + fieldName + "'>");
+            } else {
+                // It is a relationship object field — need the .id suffix
+                writer.println("<select class='enterprise-select' name='" + fieldName + ".id'>");
+            }
 
             writer.println("<option value=''>-- Select --</option>");
 
@@ -375,7 +321,9 @@ public String htmlForm(Class<?> clazz, String contextPath) {
 
             if(!field.isAnnotationPresent(ShowroomFormField.class)) continue;
 
-            ShowroomFormField fieldInfo=field.getAnnotation(ShowroomFormField.class);
+            ShowroomFormField fieldInfo = field.getAnnotation(ShowroomFormField.class);
+
+            if (fieldInfo.editIgnore()) continue;
 
             String fieldName=fieldInfo.name().isEmpty()?field.getName():fieldInfo.name();
 

@@ -29,6 +29,7 @@ public class UserDAO {
     }
 
     public void delete(Long id) {
+
         genericDao.delete(User.class, id);
     }
 
@@ -58,5 +59,12 @@ public class UserDAO {
 
     public List<User> findByRole(String role) {
         return genericDao.selectWhere(User.class, "role", role);
+    }
+
+    public void clearManagerReference(Long userId) {
+        genericDao.getEm().createQuery(
+                "UPDATE Showroom s SET s.manager = null WHERE s.manager.id = :userId")
+                .setParameter("userId",userId)
+                .executeUpdate();
     }
 }

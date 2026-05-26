@@ -15,8 +15,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "cars")
 @ShowroomForm(label = "Register New Vehicle")
-@ShowroomTable(label = "Showroom Car", tableUrl = "./list", registerUrl = "/car/form", editUrl = "editCar",
-        deleteUrl  = "deleteCar")
+@ShowroomTable(label = "Showroom Car", tableUrl = "./list", registerUrl = "/car/form")
 public class Car implements Serializable {
 
     @Id
