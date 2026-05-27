@@ -24,8 +24,8 @@ public class UserAction {
 
     @ActionMapping(path = "/user/list", method = "GET")
     public ActionResponse list(HttpServletRequest req) throws Exception {
-        List<User> users = userBean.getUsers();
-        return ActionResponse.ofList(User.class, users);
+        User caller = getCallerOrThrow(req.getSession(false));
+        return ActionResponse.ofList(User.class, userBean.getUsers(caller));
     }
 
     @ActionMapping(path = "/user/form", method = "GET")
@@ -61,5 +61,12 @@ public class UserAction {
     public ActionResponse delete(@PathVariable("id") Long id) throws Exception {
         userBean.remove(id);
         return ActionResponse.ofRedirect("/app/user/list");
+    }
+
+    private User getCallerOrThrow(HttpSession session) {
+        if (session == null) throw new SecurityException("No active session.");
+        User caller = (User) session.getAttribute("activeUser");
+        if (caller == null) throw new SecurityException("Not authenticated.");
+        return caller;
     }
 }

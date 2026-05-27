@@ -2,9 +2,12 @@ package app.bean;
 
 
 import app.dao.UserDAO;
+import app.framework.ShowroomSecured;
 import app.model.AuditLog;
 import app.model.Car;
+import app.model.Showroom;
 import app.model.User;
+import app.model.enums.UserRole;
 import app.utility.validation.Validate;
 import app.utility.validation.ValidatorQualifier;
 import jakarta.ejb.Stateless;
@@ -12,6 +15,7 @@ import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -80,11 +84,11 @@ public class UserBean {
 //
 //    }
 
-    public List<User> getUsers(){
-        List<User> data;
-            data = dao.findAll();
-
-        return data;
+    public List<User> getUsers(User caller){
+        if (caller.getRole() == UserRole.ADMIN) {
+            return dao.findAll();
+        }
+        return dao.findByShowroom(caller.getShowroom().getId());
     }
 
     public User findByUsername(String username) {
@@ -129,5 +133,35 @@ public class UserBean {
 
 
         dao.update(existingUser);
+    }
+
+    private void checkWriteAccess(Class<?> entityClass, User caller) {
+        ShowroomSecured secured = entityClass.getAnnotation(ShowroomSecured.class);
+        if (secured == null) return;
+        if (secured.readOnly()) {
+            throw new SecurityException(entityClass.getSimpleName() + " is read-only.");
+        }
+        boolean permitted = Arrays.stream(secured.writeRoles())
+                .anyMatch(r -> r == caller.getRole());
+        if (!permitted) {
+            throw new SecurityException(
+                    caller.getRole() + " cannot write " + entityClass.getSimpleName()
+            );
+        }
+    }
+
+    private void enforceShowroomOwnership(Car car, User caller) {
+        if (caller.getRole() == UserRole.ADMIN) return;
+        Showroom callerShowroom = caller.getShowroom();
+        if (callerShowroom == null) {
+            throw new SecurityException("Manager is not assigned to any showroom.");
+        }
+        if (car.getShowroom() == null) {
+            car.setShowroom(callerShowroom);
+            return;
+        }
+        if (!callerShowroom.getId().equals(car.getShowroom().getId())) {
+            throw new SecurityException("Access denied: car belongs to another showroom.");
+        }
     }
 }
