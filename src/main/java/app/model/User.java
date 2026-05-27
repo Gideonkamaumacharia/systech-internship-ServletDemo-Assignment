@@ -1,19 +1,24 @@
 package app.model;
 
-import app.framework.ShowroomForm;
-import app.framework.ShowroomFormField;
-import app.framework.ShowroomTable;
-import app.framework.ShowroomTableCol;
+import app.framework.*;
 import app.model.enums.UserRole;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.List;
 
-@ShowroomForm(label = "Register New User")
-@ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "/user/form",listJsp = "userList.jsp")
 @Entity
 @Table(name = "users")
+@ShowroomForm(label = "Register New User")
+@ShowroomTable(label = "Showroom Users", tableUrl = "./user_list", registerUrl = "/user/form",listJsp = "userList.jsp")
+@ShowroomSecured(
+        readRoles  = {UserRole.ADMIN},
+        writeRoles = {UserRole.ADMIN}
+)
+@NamedQuery(
+        name = "User.findByUsername",
+        query = "SELECT u FROM User u WHERE u.username = :username"
+)
 public class User implements Serializable {
 
     @Id
@@ -29,7 +34,7 @@ public class User implements Serializable {
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @ShowroomFormField(label = "Role", placeholder = "Role")
+    @ShowroomFormField(label = "Role", placeholder = "Role",type = "select", enumSource = UserRole.class)
     @ShowroomTableCol(label = "Role")
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -41,6 +46,7 @@ public class User implements Serializable {
 
 
     //one showroom many users
+    @ShowroomFormField(label = "Showroom", placeholder = "Showroom",type = "select", source = Showroom.class)
     @ManyToOne
     @JoinColumn(name = "showroom_id",nullable = true)
     private Showroom showroom;

@@ -2,10 +2,14 @@ package app.framework;
 
 
 import app.dao.GenericDao;
+import app.model.User;
+import app.model.enums.UserRole;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.ConvertUtilsBean;
@@ -28,22 +32,20 @@ public class ShowroomFramework {
     GenericDao dao;
 
 
-public String htmlForm(Class<?> clazz, String contextPath) {
+    public String htmlForm(Class<?> clazz, String contextPath) {
 
-    if (!clazz.isAnnotationPresent(ShowroomForm.class))
-        return "";
+        if (!clazz.isAnnotationPresent(ShowroomForm.class))
+            return "";
 
-    ShowroomForm formAnnot = clazz.getAnnotation(ShowroomForm.class);
+        ShowroomForm formAnnot = clazz.getAnnotation(ShowroomForm.class);
 
-    StringWriter stringWriter = new StringWriter();
-    PrintWriter writer = new PrintWriter(stringWriter);
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
 
-    String entityName = clazz.getSimpleName().toLowerCase();
+        String entityName = clazz.getSimpleName().toLowerCase();
+        String actionUrl  = contextPath + "/app/" + entityName + "/create";
 
-    String actionUrl = contextPath + "/app/" + entityName + "/create";
-
-    writer.println("""
-
+        writer.println("""
         <style>
             .enterprise-form-container {
                 max-width: 700px;
@@ -62,7 +64,7 @@ public String htmlForm(Class<?> clazz, String contextPath) {
                 margin-bottom: 25px;
                 text-align: center;
             }
-            .form-group {margin-bottom: 20px;}
+            .form-group { margin-bottom: 20px; }
             .form-label {
                 display: block;
                 margin-bottom: 8px;
@@ -84,119 +86,123 @@ public String htmlForm(Class<?> clazz, String contextPath) {
             .enterprise-input:focus,
             .enterprise-select:focus {
                 border-color: #38bdf8;
-                box-shadow:0 0 0 4px rgba(56,189,248,0.15);
+                box-shadow: 0 0 0 4px rgba(56,189,248,0.15);
             }
-            .enterprise-input::placeholder {   color: #94a3b8;}
+            .enterprise-input::placeholder { color: #94a3b8; }
             .enterprise-btn {
                 width: 100%;
                 padding: 13px;
                 border: none;
                 border-radius: 12px;
                 margin-top: 10px;
-                background:linear-gradient( to right,#38bdf8, #6366f1);
+                background: linear-gradient(to right, #38bdf8, #6366f1);
                 color: white;
                 font-weight: 600;
                 cursor: pointer;
                 transition: 0.3s ease;
             }
-
             .enterprise-btn:hover {
                 transform: translateY(-2px);
-                box-shadow:
-                          0 10px 25px
-                          rgba(56,189,248,0.25);
+                box-shadow: 0 10px 25px rgba(56,189,248,0.25);
             }
-
         </style>
-
     """);
 
-    writer.println("<div class='enterprise-form-container'>");
+        writer.println("<div class='enterprise-form-container'>");
+        renderTopBar(writer, contextPath);
+        writer.println("<h2 class='enterprise-form-title'>" + formAnnot.label() + "</h2>");
+        writer.println("<form method='POST' action='" + actionUrl + "'>");
 
-    renderTopBar(writer, contextPath);
+        for (Field field : clazz.getDeclaredFields()) {
 
-    writer.println("<h2 class='enterprise-form-title'>" + formAnnot.label() + "</h2>");
+            if (!field.isAnnotationPresent(ShowroomFormField.class))
+                continue;
 
-    writer.println("<form method='POST' action='" + actionUrl + "'>");
+            ShowroomFormField fieldInfo = field.getAnnotation(ShowroomFormField.class);
+            String fieldName = fieldInfo.name().isEmpty() ? field.getName() : fieldInfo.name();
 
-    for (Field field : clazz.getDeclaredFields()) {
+            writer.println("<div class='form-group'>");
+            writer.println("<label class='form-label'>" + fieldInfo.label() + "</label>");
 
-        if (!field.isAnnotationPresent(ShowroomFormField.class))
-            continue;
+            boolean isSelectType = "select".equalsIgnoreCase(fieldInfo.type());
 
-        ShowroomFormField fieldInfo =
-                field.getAnnotation(ShowroomFormField.class);
+            // ── Determine which branch to use ──────────────────────────────
+            boolean isEnumSelect   = isSelectType
+                    && fieldInfo.enumSource() != null
+                    && fieldInfo.enumSource() != ShowroomFormField.NullEnum.class
+                    && fieldInfo.enumSource().isEnum();
 
-        String fieldName = fieldInfo.name().isEmpty() ? field.getName() : fieldInfo.name();
+            boolean isEntitySelect = isSelectType
+                    && !isEnumSelect                        // enum takes priority
+                    && fieldInfo.source() != null
+                    && fieldInfo.source() != Object.class;
 
-        writer.println("<div class='form-group'>");
+            // ── ENUM SELECT ────────────────────────────────────────────────
+            if (isEnumSelect) {
 
-        writer.println("<label class='form-label'>" + fieldInfo.label() + "</label>");
-
-        // SELECT FIELD
-        if ("select".equalsIgnoreCase(fieldInfo.type()) && fieldInfo.source() != Object.class) {
-
-            List<?> options = dao.selectAll(fieldInfo.source());
-
-            if (field.getType() == Long.class || field.getType() == long.class) {
-                // It is already an id field — use fieldName directly
                 writer.println("<select class='enterprise-select' name='" + fieldName + "'>");
-            } else {
-                // It is a relationship object field — need the .id suffix
-                writer.println("<select class='enterprise-select' name='" + fieldName + ".id'>");
-            }
+                writer.println("<option value=''>-- Select " + fieldInfo.label() + " --</option>");
 
-            writer.println("<option value=''>-- Select --</option>");
-
-            if (options != null) {
-
-                for (Object opt : options) {
-
-                    Object id = getFieldValue(opt, "id");
-
-                    Object label = getDisplayLabel(opt);
-
-                    writer.println("<option value='" + id + "'>" + label + "</option>");
+                for (Object constant : fieldInfo.enumSource().getEnumConstants()) {
+                    writer.println("<option value='" + constant + "'>" + constant + "</option>");
                 }
+
+                writer.println("</select>");
+
+                // ── ENTITY SELECT ──────────────────────────────────────────────
+            } else if (isEntitySelect) {
+
+                List<?> options = dao.selectAll(fieldInfo.source());
+
+                // Relationship field → submit as fieldName.id so serializeForm resolves the proxy
+                String selectName = (field.getType() == Long.class || field.getType() == long.class)
+                        ? fieldName
+                        : fieldName + ".id";
+
+                writer.println("<select class='enterprise-select' name='" + selectName + "'>");
+                writer.println("<option value=''>-- Select " + fieldInfo.label() + " --</option>");
+
+                if (options != null) {
+                    for (Object opt : options) {
+                        Object id    = getFieldValue(opt, "id");
+                        Object label = getDisplayLabel(opt);
+                        writer.println("<option value='" + id + "'>" + label + "</option>");
+                    }
+                }
+
+                writer.println("</select>");
+
+                // ── PLAIN TEXT INPUT ───────────────────────────────────────────
+            } else {
+
+                writer.println(
+                        "<input class='enterprise-input' type='text' " +
+                                "name='" + fieldName + "' " +
+                                "placeholder='Enter " + fieldInfo.placeholder() + "' required />"
+                );
             }
 
-            writer.println("</select>");
-
-        } else {
-
-            writer.println(
-                    "<input class='enterprise-input' " + "type='text' " +
-                            "name='" + fieldName + "' " + "placeholder='Enter " + fieldInfo.placeholder() +
-                            "' required />"
-            );
+            writer.println("</div>");
         }
 
+        writer.println("<button class='enterprise-btn' type='submit'>Register</button>");
+
+        writer.println("<div style='margin-top:15px; display:flex; gap:10px;'>");
+        writer.println(
+                "<a href='" + contextPath + "/app/" + entityName + "/list' " +
+                        "style='flex:1; text-align:center; padding:11px; border-radius:12px;" +
+                        "background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);" +
+                        "color:#cbd5e1; text-decoration:none; font-size:0.9rem; transition:0.3s ease;'>" +
+                        "&larr; View " + formAnnot.label() + " List" +
+                        "</a>"
+        );
         writer.println("</div>");
+
+        writer.println("</form>");
+        writer.println("</div>");
+
+        return stringWriter.toString();
     }
-
-    writer.println("<button class='enterprise-btn' type='submit'>" + "Register" + "</button>");
-
-    writer.println("<div style='margin-top:15px; display:flex; gap:10px;'>");
-
-    writer.println("<a href='" + contextPath + "/app/" + entityName + "/list' "
-            + "style='"
-            + "flex:1; text-align:center; padding:11px; border-radius:12px;"
-            + "background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);"
-            + "color:#cbd5e1; text-decoration:none; font-size:0.9rem;"
-            + "transition:0.3s ease;"
-            + "'>"
-            + "&larr; View " + formAnnot.label() + " List"
-            + "</a>");
-
-    writer.println("</div>");
-
-    writer.println("</form>");
-
-    writer.println("</div>");
-
-    return stringWriter.toString();
-}
-
     private void renderRelationshipSelect(
             PrintWriter writer,
             ShowroomFormField fieldInfo,
@@ -483,17 +489,20 @@ public String htmlForm(Class<?> clazz, String contextPath) {
     }
 
 
-    public void htmlTable(PrintWriter writer,Class<?> clazz, List<?> tableData, String contextPath) {
+    public void htmlTable(PrintWriter writer, Class<?> clazz, List<?> tableData,
+                          String contextPath, User caller) {
 
         if (!clazz.isAnnotationPresent(ShowroomTable.class))
             return;
 
         ShowroomTable showroomTable = clazz.getAnnotation(ShowroomTable.class);
-
         String registerUrl = contextPath + "/app" + showroomTable.registerUrl();
 
-        writer.println("""
+        boolean canWrite = caller != null
+                && (caller.getRole() == UserRole.ADMIN
+                || caller.getRole() == UserRole.MANAGER);
 
+        writer.println("""
         <style>
             .enterprise-table-container {
                 max-width: 1200px;
@@ -503,7 +512,7 @@ public String htmlForm(Class<?> clazz, String contextPath) {
                 border-radius: 22px;
                 padding: 30px;
                 border: 1px solid rgba(255,255,255,0.08);
-                box-shadow:  0 20px 50px rgba(0,0,0,0.45);
+                box-shadow: 0 20px 50px rgba(0,0,0,0.45);
                 font-family: 'Inter', sans-serif;
             }
             .enterprise-table-title {
@@ -518,12 +527,7 @@ public String htmlForm(Class<?> clazz, String contextPath) {
                 border-radius: 16px;
             }
             .enterprise-table thead {
-                background:
-                        linear-gradient(
-                                to right,
-                                #1e293b,
-                                #0f172a
-                        );
+                background: linear-gradient(to right, #1e293b, #0f172a);
             }
             .enterprise-table th {
                 padding: 16px;
@@ -536,13 +540,13 @@ public String htmlForm(Class<?> clazz, String contextPath) {
             .enterprise-table td {
                 padding: 15px;
                 color: #cbd5e1;
-                border-bottom:1px solid rgba(255,255,255,0.05);
+                border-bottom: 1px solid rgba(255,255,255,0.05);
             }
             .enterprise-table tbody tr {
                 transition: 0.25s ease;
             }
             .enterprise-table tbody tr:hover {
-                background:rgba(56,189,248,0.08);
+                background: rgba(56,189,248,0.08);
             }
             .enterprise-action-link {
                 display: inline-block;
@@ -551,156 +555,171 @@ public String htmlForm(Class<?> clazz, String contextPath) {
                 text-decoration: none;
                 font-size: 0.85rem;
                 font-weight: 600;
-                background:
-                        linear-gradient(
-                                to right,
-                                #38bdf8,
-                                #6366f1
-                        );
+                background: linear-gradient(to right, #38bdf8, #6366f1);
                 color: white;
                 transition: 0.3s ease;
             }
             .enterprise-action-link:hover {
                 transform: translateY(-2px);
-                box-shadow:
-                        0 10px 20px
-                        rgba(56,189,248,0.25);
+                box-shadow: 0 10px 20px rgba(56,189,248,0.25);
             }
             .enterprise-register-link {
                 display: inline-block;
-                margin-top: 25px;
-                color: #94a3b8;
+                padding: 10px 20px;
+                border-radius: 12px;
+                background: linear-gradient(to right, #38bdf8, #6366f1);
+                color: white;
                 text-decoration: none;
-                font-weight: 500;
+                font-weight: 600;
+                font-size: 0.9rem;
                 transition: 0.3s ease;
             }
             .enterprise-register-link:hover {
-                color: #ffffff;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(56,189,248,0.25);
             }
             .empty-state {
                 padding: 30px;
                 text-align: center;
                 color: #94a3b8;
             }
+            .role-badge {
+                display: inline-block;
+                padding: 3px 10px;
+                border-radius: 20px;
+                font-size: 0.78rem;
+                font-weight: 600;
+                background: rgba(56,189,248,0.15);
+                color: #38bdf8;
+                border: 1px solid rgba(56,189,248,0.3);
+            }
         </style>
     """);
 
         writer.println("<section class='enterprise-table-container'>");
-
         renderTopBar(writer, contextPath);
-
-        writer.println("<h2 class='enterprise-table-title'>" + showroomTable.label() + " Registered</h2>");
+        writer.println("<h2 class='enterprise-table-title'>"
+                + showroomTable.label() + " Registered</h2>");
 
         if (tableData == null || tableData.isEmpty()) {
-            writer.println("<div class='empty-state'>" + "No records available." + "</div>");
+            writer.println("<div class='empty-state'>No records available.</div>");
 
         } else {
-            writer.println("<table class='enterprise-table'>");
-            List<String> fieldNames = new ArrayList<>();
+
+            // ── Collect annotated fields ───────────────────────────────────
+            List<Field> annotatedFields = new ArrayList<>();
             for (Field field : clazz.getDeclaredFields()) {
-                if (!field.isAnnotationPresent(ShowroomTableCol.class))
-                    continue;
-                fieldNames.add(field.getName());
+                if (field.isAnnotationPresent(ShowroomTableCol.class)) {
+                    annotatedFields.add(field);
+                }
             }
 
-            writer.println("<thead>");
-            writer.println("<tr>");
+            writer.println("<table class='enterprise-table'>");
 
-            for (String fieldName : fieldNames) {
-                writer.println("<th>" + fieldName + "</th>");
+            // ── Header ─────────────────────────────────────────────────────
+            writer.println("<thead><tr>");
+            for (Field field : annotatedFields) {
+                ShowroomTableCol col = field.getAnnotation(ShowroomTableCol.class);
+                writer.println("<th>" + col.label() + "</th>");
             }
+            // Actions column header — only render if canWrite
+            if (canWrite) {
+                writer.println("<th>Actions</th>");
+            }
+            writer.println("</tr></thead>");
 
-            writer.println("<th>Actions</th>");
-            writer.println("</tr>");
-            writer.println("</thead>");
-
+            // ── Body ───────────────────────────────────────────────────────
             writer.println("<tbody>");
 
             for (Object data : tableData) {
                 writer.println("<tr>");
 
-                for (String fieldName : fieldNames) {
+                for (Field field : annotatedFields) {
                     try {
-                        Field field = data.getClass().getDeclaredField(fieldName);
                         field.setAccessible(true);
-
                         Object value = field.get(data);
-
                         writer.println("<td>" + (value != null ? value : "-") + "</td>");
-
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
 
-                try {
-                    Object id = getFieldValue(data, "id");
+                // ── Actions cell — only for ADMIN and MANAGER ──────────────
+                if (canWrite) {
+                    try {
+                        Object id = getFieldValue(data, "id");
+                        String entityName = clazz.getSimpleName().toLowerCase();
 
-                    String entityName = clazz.getSimpleName().toLowerCase();
-                    writer.println("<td>");
+                        writer.println("<td>");
 
-                    writer.println("<a class='enterprise-action-link' href='"
-                            + contextPath + "/app/" + entityName + "/edit/" + id + "'>"
-                            + "Edit"
-                            + "</a>");
+                        // Edit button
+                        writer.println(
+                                "<a class='enterprise-action-link' " +
+                                        "href='" + contextPath + "/app/" + entityName + "/edit/" + id + "'>" +
+                                        "Edit</a>"
+                        );
 
-                    writer.println("<form method='POST' action='"
-                            + contextPath + "/app/" + entityName + "/delete/" + id + "'"
-                            + " style='display:inline; margin-left:8px;'"
-                            + " onsubmit='return confirm(\"Delete this record?\")'>");
+                        // Delete button
+                        writer.println(
+                                "<form method='POST' " +
+                                        "action='" + contextPath + "/app/" + entityName + "/delete/" + id + "' " +
+                                        "style='display:inline; margin-left:8px;' " +
+                                        "onsubmit='return confirm(\"Delete this record?\")'>" +
+                                        "<button type='submit' style='" +
+                                        "padding:8px 14px; border-radius:10px; border:none;" +
+                                        "font-size:0.85rem; font-weight:600;" +
+                                        "background:linear-gradient(to right,#ef4444,#dc2626);" +
+                                        "color:white; cursor:pointer;'>" +
+                                        "Delete</button></form>"
+                        );
 
-                    writer.println("<button type='submit' style='"
-                            + "padding:8px 14px;"
-                            + "border-radius:10px;"
-                            + "border:none;"
-                            + "font-size:0.85rem;"
-                            + "font-weight:600;"
-                            + "background:linear-gradient(to right,#ef4444,#dc2626);"
-                            + "color:white;"
-                            + "cursor:pointer;"
-                            + "'>Delete</button>");
-                    writer.println("</form>");
+                        writer.println("</td>");
 
-                    writer.println("</td>");
-
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
+                // SALES_REP / VIEWER — no actions cell rendered at all
 
                 writer.println("</tr>");
             }
+
             writer.println("</tbody>");
             writer.println("</table>");
         }
 
-        //writer.println("<a class='enterprise-register-link' href='" + registerUrl + "'>" + "&larr; Register " + showroomTable.label() + "</a>");
-
+        // ── Bottom bar — Register link only for ADMIN and MANAGER ─────────
         writer.println("<div style='margin-top:25px; display:flex; gap:15px; align-items:center;'>");
 
-        writer.println("<a class='enterprise-register-link' href='" + registerUrl + "'>"
-                + "&larr; Register " + showroomTable.label()
-                + "</a>");
-
-//        writer.println("<a href='" + contextPath + "/home' "
-//                + "style='"
-//                + "padding:10px 18px; border-radius:12px;"
-//                + "background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08);"
-//                + "color:#94a3b8; text-decoration:none; font-size:0.9rem;"
-//                + "transition:0.3s ease;"
-//                + "'>"
-//                + "&#8962; Dashboard"
-//                + "</a>");
+        if (canWrite) {
+            writer.println(
+                    "<a class='enterprise-register-link' href='" + registerUrl + "'>" +
+                            "+ Register " + showroomTable.label() + "</a>"
+            );
+        } else {
+            // SALES_REP / VIEWER sees a read-only label instead
+            writer.println(
+                    "<span style='color:#94a3b8; font-size:0.9rem;'>" +
+                            "Viewing " + showroomTable.label() + " records (read-only)</span>"
+            );
+        }
 
         writer.println("</div>");
-
         writer.println("</section>");
     }
+
     public String htmlTable(Class<?> clazz,List<?> tableData, String contextPath) {
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
 
-        htmlTable(printWriter, clazz, tableData, contextPath);
+        User caller = (User) CDI.current()
+                .select(HttpServletRequest.class)
+                .get()
+                .getSession(false)
+                .getAttribute("activeUser");
+
+        htmlTable(printWriter, clazz, tableData, contextPath,caller);
         return stringWriter.toString();
     }
 

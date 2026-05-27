@@ -87,16 +87,11 @@ public class UserBean {
         return data;
     }
 
-    public User findByUsername(String username){
-        try{
-            Optional<User> users = dao. findByUsername(username);
-                if (!users.isEmpty()) {
-                    return users.get();
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-
-        }return null;
+    public User findByUsername(String username) {
+        return dao.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No user found with username: " + username
+                ));
     }
 
 

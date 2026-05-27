@@ -25,7 +25,10 @@ public class CarDAO {
     }
 
     public List<Car> findByShowroom(Long showroomId) {
-        return genericDao.selectWhere(Car.class, "showroom_Id", showroomId);
+        return genericDao.getEm().createQuery(
+                        "SELECT c FROM Car c WHERE c.showroom.id = :showroomId", Car.class)
+                .setParameter("showroomId", showroomId)
+                .getResultList();
     }
 
     public void insert(Car car) {

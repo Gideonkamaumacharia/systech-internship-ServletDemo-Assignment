@@ -1,6 +1,7 @@
 package app.model;
 
 import app.framework.*;
+import app.model.enums.UserRole;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -15,6 +16,10 @@ import java.util.List;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = "showrooms")
+@ShowroomSecured(
+        readRoles  = {UserRole.ADMIN, UserRole.MANAGER},
+        writeRoles = {UserRole.ADMIN}
+)
 @ShowroomForm(label = "Register Showroom")
 @ShowroomTable(label = "Branch Locations", tableUrl = "./showroom_list", registerUrl = "/showroom/form",listJsp = "showroomList.jsp")
 public class Showroom implements Serializable {

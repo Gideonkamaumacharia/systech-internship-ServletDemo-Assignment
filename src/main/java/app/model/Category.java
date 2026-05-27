@@ -1,6 +1,7 @@
 package app.model;
 
 import app.framework.*;
+import app.model.enums.UserRole;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -13,10 +14,15 @@ import java.io.Serializable;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@ShowroomForm(label = "Add Category")
-@ShowroomTable(label = "Vehicle Categories", tableUrl = "./category_list", registerUrl = "/category/form",listJsp = "categoryList.jsp")
 @Entity
 @Table(name = "categories")
+@ShowroomForm(label = "Add Category")
+@ShowroomTable(label = "Vehicle Categories", tableUrl = "./category_list", registerUrl = "/category/form",listJsp = "categoryList.jsp")
+// Category — only ADMIN writes, everyone can read
+@ShowroomSecured(
+        readRoles  = {UserRole.ADMIN, UserRole.MANAGER, UserRole.SALES_REP, UserRole.VIEWER},
+        writeRoles = {UserRole.ADMIN}
+)
 public class Category implements Serializable {
 
     @Id

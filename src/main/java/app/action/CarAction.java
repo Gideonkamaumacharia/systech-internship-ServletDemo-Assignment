@@ -24,26 +24,18 @@ public class CarAction {
 
     @ActionMapping(path = "/car/list", method = "GET")
     public ActionResponse list(HttpServletRequest req) throws Exception {
-        List<Car> cars = carBean.findAll();
-        return ActionResponse.ofList(Car.class, cars);
-    }
-
-    @ActionMapping(path = "/car/form", method = "GET")
-    public ActionResponse form(HttpServletRequest req) throws Exception {
-        String html = showroomFramework.htmlForm(Car.class,req.getContextPath());
-        return ActionResponse.ofHtml(html);
+        User caller = getCallerOrThrow(req.getSession(false));
+        return ActionResponse.ofList(Car.class, carBean.findAll(caller));
     }
 
     @ActionMapping(path = "/car/create", method = "POST")
-    public ActionResponse create(HttpServletRequest req,
-                                 HttpSession session) throws Exception {
-        Car  car  = showroomFramework.serializeForm(req.getParameterMap(), Car.class);
-        User user = (User) session.getAttribute("activeUser");
-        carBean.create(car, user);
+    public ActionResponse create(HttpServletRequest req, HttpSession session) throws Exception {
+        User caller = getCallerOrThrow(session);
+        Car car = showroomFramework.serializeForm(req.getParameterMap(), Car.class);
+        carBean.create(car, caller);
         return ActionResponse.ofRedirect("/app/car/list");
     }
-    //Map<String, String[]>
-//"carModel" -> ["Audi  Q8"]
+
     @ActionMapping(path = "/car/edit/{id}", method = "GET")
     public ActionResponse edit(@PathVariable("id") Long id,HttpServletRequest req) throws Exception {
         Car car = carBean.findById(id);
@@ -52,15 +44,30 @@ public class CarAction {
     }
 
     @ActionMapping(path = "/car/update", method = "POST")
-    public ActionResponse update(HttpServletRequest req) throws Exception {
+    public ActionResponse update(HttpServletRequest req, HttpSession session) throws Exception {
+        User caller = getCallerOrThrow(session);
         Car car = showroomFramework.serializeForm(req.getParameterMap(), Car.class);
-        carBean.update(car);
+        carBean.update(car, caller);
         return ActionResponse.ofRedirect("/app/car/list");
     }
 
     @ActionMapping(path = "/car/delete/{id}", method = "POST")
-    public ActionResponse delete(@PathVariable("id") Long id) throws Exception {
-        carBean.remove(id);
+    public ActionResponse delete(@PathVariable("id") Long id, HttpSession session) throws Exception {
+        User caller = getCallerOrThrow(session);
+        carBean.remove(id, caller);
         return ActionResponse.ofRedirect("/app/car/list");
+    }
+
+    @ActionMapping(path = "/car/form", method = "GET")
+    public ActionResponse form(HttpServletRequest req) throws Exception {
+        String html = showroomFramework.htmlForm(Car.class,req.getContextPath());
+        return ActionResponse.ofHtml(html);
+    }
+
+    private User getCallerOrThrow(HttpSession session) {
+        if (session == null) throw new SecurityException("No active session.");
+        User caller = (User) session.getAttribute("activeUser");
+        if (caller == null) throw new SecurityException("Not authenticated.");
+        return caller;
     }
 }

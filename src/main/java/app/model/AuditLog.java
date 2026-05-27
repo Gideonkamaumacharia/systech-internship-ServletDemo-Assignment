@@ -1,6 +1,7 @@
 package app.model;
 
 import app.framework.*;
+import app.model.enums.UserRole;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.*;
 
@@ -11,6 +12,10 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "audit_logs")
+@ShowroomSecured(
+        readRoles = {UserRole.ADMIN},
+        readOnly  = true
+)
 @ShowroomTable(label = "Log", tableUrl = "./applogs",listJsp = "audit_logs.jsp")
 public class AuditLog implements Serializable {
 

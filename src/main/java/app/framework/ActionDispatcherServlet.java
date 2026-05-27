@@ -1,6 +1,7 @@
 package app.framework;
 
 
+import app.model.User;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 import jakarta.servlet.*;
@@ -87,10 +88,11 @@ public class ActionDispatcherServlet extends HttpServlet {
 
             } else {
                 // Framework renders the list as HTML table
+
                 String html = showroomFramework.htmlTable(
                         actionResponse.getResponseClazz(),//Car.class
                         actionResponse.getResponseDataList(), //list of cars
-                        req.getContextPath()//showroom
+                        req.getContextPath() //showroom
                 );
                 resp.setContentType("text/html;charset=UTF-8");
                 resp.getWriter().write(html);

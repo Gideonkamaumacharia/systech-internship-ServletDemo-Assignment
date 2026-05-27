@@ -18,5 +18,10 @@ public @interface ShowroomFormField {
 
     Class<?> source() default Object.class;
 
+    Class<? extends Enum<?>> enumSource() default NullEnum.class;
+
     boolean editIgnore() default false;
+
+    enum NullEnum {}
+
 }

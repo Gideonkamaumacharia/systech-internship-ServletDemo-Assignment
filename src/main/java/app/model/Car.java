@@ -1,6 +1,7 @@
 package app.model;
 
 import app.framework.*;
+import app.model.enums.UserRole;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -15,6 +16,10 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "cars")
 @ShowroomForm(label = "Register New Vehicle")
+@ShowroomSecured(
+        readRoles  = {UserRole.ADMIN, UserRole.MANAGER, UserRole.SALES_REP, UserRole.VIEWER},
+        writeRoles = {UserRole.ADMIN, UserRole.MANAGER}
+)
 @ShowroomTable(label = "Showroom Car", tableUrl = "./list", registerUrl = "/car/form")
 public class Car implements Serializable {
 
