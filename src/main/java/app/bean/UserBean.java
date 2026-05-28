@@ -2,6 +2,7 @@ package app.bean;
 
 
 import app.dao.UserDAO;
+import app.framework.FrameworkDataProvider;
 import app.framework.ShowroomSecured;
 import app.model.AuditLog;
 import app.model.Car;
@@ -35,6 +36,9 @@ public class UserBean {
 
     @Inject
     private Event<AuditLog> auditLogEvent;
+
+    @Inject
+    FrameworkDataProvider dataProvider;
 
 
     public void create(User user){
@@ -128,12 +132,34 @@ public class UserBean {
     public void update(User updatedUser){
         User existingUser = dao.findById(updatedUser.getId());
 
+        // Keep password — never overwrite
+        updatedUser.setPasswordHash(existingUser.getPasswordHash());
+
         existingUser.setUsername(updatedUser.getUsername());
         existingUser.setRole(updatedUser.getRole());
 
+        if(updatedUser.getShowroom() != null){
+            existingUser.setShowroom(updatedUser.getShowroom());
+
+            if(updatedUser.getRole() == UserRole.MANAGER){
+                dao.assignShowroomManager(
+                        updatedUser.getShowroom().getId(),
+                        existingUser.getId()
+                );
+            }
+        }
+        if (updatedUser.getRole() != UserRole.MANAGER
+                && existingUser.getRole() == UserRole.MANAGER) {
+            dao.clearManagerReference(existingUser.getId());
+        }
 
         dao.update(existingUser);
+        dataProvider.evict(User.class);
+        dataProvider.evict(Showroom.class);
     }
+
+
+
 
     private void checkWriteAccess(Class<?> entityClass, User caller) {
         ShowroomSecured secured = entityClass.getAnnotation(ShowroomSecured.class);

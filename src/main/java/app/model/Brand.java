@@ -42,6 +42,7 @@ public class Brand implements Serializable {
 
     //@JsonbTransient
     @XmlTransient
+    @JsonbTransient
     @OneToMany(mappedBy = "brand")
     private List<Car> cars;
 

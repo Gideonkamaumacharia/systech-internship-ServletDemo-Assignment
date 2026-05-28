@@ -1,6 +1,8 @@
 package app.bean;
 
+import app.dao.CachedDataProvider;
 import app.dao.CategoryDAO;
+import app.framework.FrameworkDataProvider;
 import app.model.AuditLog;
 import app.model.Brand;
 import app.model.Category;
@@ -29,6 +31,9 @@ public class CategoryBean {
     @Inject
     private Event<AuditLog> auditLogEvent;
 
+    @Inject
+    FrameworkDataProvider dataProvider;
+
 
     public void createCategory(Category category, User currentUser){
 
@@ -37,6 +42,7 @@ public class CategoryBean {
         }
 
         dao.insert(category);
+        dataProvider.evict(Category.class);
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("CREATE_CATEGORY");
@@ -66,6 +72,7 @@ public class CategoryBean {
 
         Category category = dao.findById(id);
         dao.delete(id);
+        dataProvider.evict(Category.class);
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("DELETE_CAR");
@@ -87,7 +94,7 @@ public class CategoryBean {
         existingCategory.setName(updatedCategory.getName());
         existingCategory.setDescription(updatedCategory.getDescription());
 
-
         dao.update(updatedCategory);
+        dataProvider.evict(Category.class);
     }
 }

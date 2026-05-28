@@ -1,6 +1,8 @@
 package app.bean;
 
 import app.dao.BrandDAO;
+import app.dao.CachedDataProvider;
+import app.framework.FrameworkDataProvider;
 import app.model.AuditLog;
 import app.model.Brand;
 import app.model.Car;
@@ -28,6 +30,9 @@ public class BrandBean {
     @Inject
     Event<AuditLog> auditLogEvent;
 
+    @Inject
+    FrameworkDataProvider dataProvider;
+
     public void create(Brand brand, User currentUser){
 
         if(!validator.isValid(brand)){
@@ -35,6 +40,7 @@ public class BrandBean {
         }
 
         dao.insert(brand);
+        dataProvider.evict(Brand.class);
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("CREATE_BRAND");
@@ -66,6 +72,7 @@ public class BrandBean {
 
         Brand brand = dao.findById(id);
         dao.delete(id);
+        dataProvider.evict(Brand.class);
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("DELETE_BRAND");
@@ -87,7 +94,7 @@ public class BrandBean {
         existingBrand.setName(updatedBrand.getName());
         existingBrand.setCountryOfOrigin(updatedBrand.getCountryOfOrigin());
 
-
         dao.update(updatedBrand);
+        dataProvider.evict(Brand.class);
     }
 }

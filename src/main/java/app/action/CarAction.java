@@ -23,9 +23,26 @@ public class CarAction {
     private ShowroomFramework showroomFramework;
 
     @ActionMapping(path = "/car/list", method = "GET")
-    public ActionResponse list(HttpServletRequest req) throws Exception {
-        User caller = getCallerOrThrow(req.getSession(false));
-        return ActionResponse.ofList(Car.class, carBean.findAll(caller));
+    public ActionResponse list(HttpServletRequest req, HttpSession session) throws Exception {
+
+        User caller = (User) session.getAttribute("activeUser");
+
+        String showroomId  = req.getParameter("showroomId");
+        String brandId     = req.getParameter("brandId");
+        String categoryId  = req.getParameter("categoryId");
+
+        List<Car> cars = carBean.getCars(showroomId, brandId, categoryId, caller);
+
+        // Build filter form HTML + table HTML together
+        String filterForm = showroomFramework.htmlFilterForm(
+                req.getContextPath(),
+                "/app/car/list",
+                caller
+        );
+
+        String table = showroomFramework.htmlTable(Car.class, cars, req.getContextPath());
+
+        return ActionResponse.ofHtml(filterForm + table);
     }
 
     @ActionMapping(path = "/car/create", method = "POST")

@@ -43,6 +43,7 @@ public class Category implements Serializable {
 
     //@JsonbTransient
     @XmlTransient
+    @JsonbTransient
     @OneToMany(mappedBy = "category")
     private List<Car> cars;
 

@@ -42,17 +42,20 @@ public class LoginPage extends HttpServlet {
             return;
         }
 
-        // Validate directly — no container involved
         User user = identityStore.validate(username, password);
 
         if (user != null) {
-            HttpSession session = req.getSession(true);
-            session.setAttribute("userAuthenticated", true);
-            session.setAttribute("activeUser", user);
-            session.setAttribute("UserActualName", user.getUsername());
+            HttpSession oldSession = req.getSession(false);
 
-            System.out.println("=== Login SUCCESS: " + user.getUsername()
-                    + " role: " + user.getRole().name());
+            if (oldSession != null) {
+                oldSession.invalidate();
+            }
+
+            HttpSession newSession = req.getSession(true);
+
+            newSession.setAttribute("userAuthenticated", true);
+            newSession.setAttribute("activeUser", user);
+            newSession.setAttribute("UserActualName", user.getUsername());
 
             String dest = req.getParameter("dest");
             if (dest == null || dest.isBlank()) dest = "/home";

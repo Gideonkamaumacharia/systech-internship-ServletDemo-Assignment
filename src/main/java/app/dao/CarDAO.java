@@ -60,17 +60,19 @@ public class CarDAO {
     }
 
     public List<Car> findByCriteria(Long showroomId, Long brandId, Long categoryId) {
-        StringBuilder jpql = new StringBuilder("SELECT c FROM Car c WHERE 1=1");
+        StringBuilder jpql = new StringBuilder("SELECT c FROM Car c WHERE 1=1 ");
 
         if(showroomId != null){
             jpql.append("AND c.showroom.id = :showroomId");
         }
         if(categoryId != null){
-            jpql.append("AND c.category.id = :categoryId");
+            jpql.append(" AND c.category.id = :categoryId");
         }
         if(brandId != null){
-            jpql.append("AND c.brand.id = :brandId");
+            jpql.append(" AND c.brand.id = :brandId");
         }
+
+        jpql.append(" ORDER BY c.carModel ASC");
 
         TypedQuery<Car> query = genericDao.getEm().createQuery(jpql.toString(),Car.class);
 

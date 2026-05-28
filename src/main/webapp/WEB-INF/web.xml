@@ -39,19 +39,45 @@
         <welcome-file>home</welcome-file>
     </welcome-file-list>
 
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>SOAP</web-resource-name>
+            <url-pattern>/CarSoapApi</url-pattern>
+        </web-resource-collection>
+
+        <auth-constraint>
+            <role-name>user</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+    </login-config>
 
     <security-role>
-        <role-name>ADMIN</role-name>
+        <role-name>user</role-name>
     </security-role>
-    <security-role>
-        <role-name>MANAGER</role-name>
-    </security-role>
-    <security-role>
-        <role-name>SALES_REP</role-name>
-    </security-role>
-    <security-role>
-        <role-name>VIEWER</role-name>
-    </security-role>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>true</secure>
+        </cookie-config>
+    </session-config>
+
+<!--    <security-role>-->
+<!--        <role-name>ADMIN</role-name>-->
+<!--    </security-role>-->
+<!--    <security-role>-->
+<!--        <role-name>MANAGER</role-name>-->
+<!--    </security-role>-->
+<!--    <security-role>-->
+<!--        <role-name>SALES_REP</role-name>-->
+<!--    </security-role>-->
+<!--    <security-role>-->
+<!--        <role-name>VIEWER</role-name>-->
+<!--    </security-role>-->
 
 </web-app>
 

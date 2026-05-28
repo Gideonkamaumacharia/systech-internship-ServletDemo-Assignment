@@ -2,6 +2,7 @@ package app.model;
 
 import app.framework.*;
 import app.model.enums.UserRole;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -42,12 +43,14 @@ public class User implements Serializable {
 
     //many logs to one user
     @OneToMany(mappedBy = "user")
+    @JsonbTransient
     private List<AuditLog> logs;
 
 
     //one showroom many users
-    @ShowroomFormField(label = "Showroom", placeholder = "Showroom",type = "select", source = Showroom.class)
+    @ShowroomFormField(label = "Showroom", placeholder = "Showroom",type = "select", source = Showroom.class,editIgnore = false )
     @ManyToOne
+    @JsonbTransient
     @JoinColumn(name = "showroom_id",nullable = true)
     private Showroom showroom;
 

@@ -66,7 +66,7 @@ public class CarResource {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Car findById(@PathParam("id") Long id) {
-        resolveRestCaller(); // auth check only
+        User caller = resolveRestCaller();
         return carBean.findById(id);
     }
 
@@ -87,5 +87,19 @@ public class CarResource {
         User caller = resolveRestCaller();
         carBean.remove(id, caller);
         return Response.noContent().build();
+    }
+
+    @GET
+    @Path("/filter")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Car> filterCars(
+            @QueryParam("showroomId") String showroomId,
+            @QueryParam("brandId") String brandId,
+            @QueryParam("categoryId") String categoryId
+    ){
+
+        User caller = resolveRestCaller();
+        return carBean.getCars(showroomId,brandId,categoryId,caller);
+
     }
 }

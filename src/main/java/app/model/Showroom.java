@@ -40,6 +40,7 @@ public class Showroom implements Serializable {
 
     @ShowroomTableCol(label = "Manager")
     @OneToOne
+    @JsonbTransient
     @JoinColumn(name = "manager_id",nullable = false,unique = true)
     private User manager;
 
@@ -51,11 +52,12 @@ public class Showroom implements Serializable {
 
     //@JsonbTransient
     @XmlTransient
+    @JsonbTransient
     @OneToMany(mappedBy = "showroom")
     private List<Car> cars;
 
 
-    @OneToMany(mappedBy = "showroom",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "showroom")
     private List<User> users;
 
 

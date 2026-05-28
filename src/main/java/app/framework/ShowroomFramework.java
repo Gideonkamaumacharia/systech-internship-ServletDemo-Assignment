@@ -2,6 +2,9 @@ package app.framework;
 
 
 import app.dao.GenericDao;
+import app.model.Brand;
+import app.model.Category;
+import app.model.Showroom;
 import app.model.User;
 import app.model.enums.UserRole;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -29,7 +32,7 @@ import java.util.*;
 public class ShowroomFramework {
 
     @Inject
-    GenericDao dao;
+    FrameworkDataProvider dao;
 
 
     public String htmlForm(Class<?> clazz, String contextPath) {
@@ -228,146 +231,157 @@ public class ShowroomFramework {
         writer.println("</select>");
     }
 
-    public String htmlEditForm(Class<?> clazz,Object entity,String contextPath){
+    public String htmlEditForm(Class<?> clazz, Object entity, String contextPath) {
 
-        if(!clazz.isAnnotationPresent(ShowroomForm.class)) return "";
+        if (!clazz.isAnnotationPresent(ShowroomForm.class)) return "";
 
-        ShowroomForm formAnnot=clazz.getAnnotation(ShowroomForm.class);
+        ShowroomForm formAnnot = clazz.getAnnotation(ShowroomForm.class);
 
-        StringWriter sw=new StringWriter();
-        PrintWriter writer=new PrintWriter(sw);
+        StringWriter sw     = new StringWriter();
+        PrintWriter  writer = new PrintWriter(sw);
 
-        String actionUrl=contextPath+"/app/"+clazz.getSimpleName().toLowerCase()+"/update";
+        String actionUrl = contextPath + "/app/" + clazz.getSimpleName().toLowerCase() + "/update";
 
         writer.println("""
-    <style>
-
-    .enterprise-form{
-        max-width:700px;
-        margin:40px auto;
-        padding:35px;
-        background:rgba(15,23,42,.92);
-        border-radius:22px;
-        border:1px solid rgba(255,255,255,.08);
-        box-shadow:0 20px 50px rgba(0,0,0,.45);
-        font-family:'Inter',sans-serif;
-    }
-
-    .enterprise-form h2{
-        color:#fff;
-        margin-bottom:25px;
-        font-size:1.8rem;
-        text-align:center;
-    }
-
-    .form-group{margin-bottom:18px;}
-
-    .enterprise-form label{
-        display:block;
-        margin-bottom:8px;
-        color:#cbd5e1;
-        font-size:.92rem;
-        font-weight:600;
-    }
-
-    .enterprise-form input,
-    .enterprise-form select{
-        width:100%;
-        padding:11px 14px;
-        border-radius:12px;
-        border:1px solid rgba(255,255,255,.08);
-        background:#1e293b;
-        color:#fff;
-        outline:none;
-        transition:.3s ease;
-        box-sizing:border-box;
-    }
-
-    .enterprise-form input:focus,
-    .enterprise-form select:focus{
-        border-color:#38bdf8;
-        box-shadow:0 0 0 4px rgba(56,189,248,.15);
-    }
-
-    .enterprise-form input::placeholder{color:#94a3b8;}
-
-    .enterprise-btn{
-        width:100%;
-        padding:13px;
-        margin-top:10px;
-        border:none;
-        border-radius:12px;
-        background:linear-gradient(to right,#38bdf8,#6366f1);
-        color:#fff;
-        font-weight:600;
-        cursor:pointer;
-        transition:.3s ease;
-    }
-
-    .enterprise-btn:hover{
-        transform:translateY(-2px);
-        box-shadow:0 10px 25px rgba(56,189,248,.25);
-    }
-
-    </style>
+        <style>
+        .enterprise-form {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 35px;
+            background: rgba(15,23,42,.92);
+            border-radius: 22px;
+            border: 1px solid rgba(255,255,255,.08);
+            box-shadow: 0 20px 50px rgba(0,0,0,.45);
+            font-family: 'Inter', sans-serif;
+        }
+        .enterprise-form h2 {
+            color: #fff;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+        .form-group { margin-bottom: 18px; }
+        .enterprise-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-size: .92rem;
+            font-weight: 600;
+        }
+        .enterprise-form input,
+        .enterprise-form select {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,.08);
+            background: #1e293b;
+            color: #fff;
+            outline: none;
+            transition: .3s ease;
+            box-sizing: border-box;
+        }
+        .enterprise-form input:focus,
+        .enterprise-form select:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 4px rgba(56,189,248,.15);
+        }
+        .enterprise-form input::placeholder { color: #94a3b8; }
+        .enterprise-btn {
+            width: 100%;
+            padding: 13px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(to right, #38bdf8, #6366f1);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .3s ease;
+        }
+        .enterprise-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(56,189,248,.25);
+        }
+        </style>
     """);
 
         writer.println("<div class='enterprise-form'>");
 
         renderTopBar(writer, contextPath);
 
-        writer.println("<h2>Edit "+formAnnot.label()+"</h2>");
-        writer.println("<form method='POST' action='"+actionUrl+"'>");
+        writer.println("<h2>Edit " + formAnnot.label() + "</h2>");
+        writer.println("<form method='POST' action='" + actionUrl + "'>");
 
-        Object idValue=getFieldValue(entity,"id");
+        Object idValue = getFieldValue(entity, "id");
+        writer.println("<input type='hidden' name='id' value='" + idValue + "'/>");
 
-        writer.println("<input type='hidden' name='id' value='"+idValue+"'/>");
+        for (Field field : clazz.getDeclaredFields()) {
 
-        for(Field field:clazz.getDeclaredFields()){
-
-            if(!field.isAnnotationPresent(ShowroomFormField.class)) continue;
+            if (!field.isAnnotationPresent(ShowroomFormField.class)) continue;
 
             ShowroomFormField fieldInfo = field.getAnnotation(ShowroomFormField.class);
 
             if (fieldInfo.editIgnore()) continue;
 
-            String fieldName=fieldInfo.name().isEmpty()?field.getName():fieldInfo.name();
+            String fieldName = fieldInfo.name().isEmpty() ? field.getName() : fieldInfo.name();
 
             writer.println("<div class='form-group'>");
-            writer.println("<label>"+fieldInfo.label()+"</label>");
+            writer.println("<label>" + fieldInfo.label() + "</label>");
 
-            if("select".equalsIgnoreCase(fieldInfo.type()) && fieldInfo.source()!=Object.class){
+            // ── ENTITY SELECT ──────────────────────────────────────────────
+            if ("select".equalsIgnoreCase(fieldInfo.type())
+                    && fieldInfo.source() != Object.class) {
 
-                List<?> options=dao.selectAll(fieldInfo.source());
+                List<?> options   = dao.selectAll(fieldInfo.source());
+                Object currentVal = getFieldValue(entity, field.getName());
 
-                Object currentVal=getFieldValue(entity,field.getName());
-
-                writer.println("<select name='"+fieldName+".id'>");
+                writer.println("<select name='" + fieldName + ".id'>");
                 writer.println("<option value=''>-- Select --</option>");
 
-                if(options!=null){
-
-                    for(Object opt:options){
-
-                        Object id=getFieldValue(opt,"id");
-                        Object label=getDisplayLabel(opt);
-
-                        String selected=(id!=null && id.equals(currentVal))?"selected":"";
-
-                        writer.println("<option value='"+id+"' "+selected+">"+label+"</option>");
+                if (options != null) {
+                    for (Object opt : options) {
+                        Object id    = getFieldValue(opt, "id");
+                        Object label = getDisplayLabel(opt);
+                        String selected = (id != null && id.equals(currentVal))
+                                ? "selected" : "";
+                        writer.println("<option value='" + id + "' "
+                                + selected + ">" + label + "</option>");
                     }
                 }
 
                 writer.println("</select>");
 
-            }else{
+                // ── ENUM SELECT ────────────────────────────────────────────────
+            } else if ("select".equalsIgnoreCase(fieldInfo.type())
+                    && fieldInfo.enumSource() != null
+                    && fieldInfo.enumSource() != ShowroomFormField.NullEnum.class
+                    && fieldInfo.enumSource().isEnum()) {
 
-                Object currentVal=getFieldValue(entity,field.getName());
+                Object currentVal = getFieldValue(entity, field.getName());
 
-                String value=currentVal!=null?currentVal.toString():"";
+                writer.println("<select name='" + fieldName + "'>");
+                writer.println("<option value=''>-- Select " + fieldInfo.label() + " --</option>");
 
-                writer.println("<input type='text' name='"+fieldName+"' value='"+value+
-                        "' placeholder='Enter "+fieldInfo.placeholder()+"' required/>");
+                for (Object constant : fieldInfo.enumSource().getEnumConstants()) {
+                    String selected = (currentVal != null
+                            && currentVal.toString().equals(constant.toString()))
+                            ? "selected" : "";
+                    writer.println("<option value='" + constant + "' "
+                            + selected + ">" + constant + "</option>");
+                }
+
+                writer.println("</select>");
+
+                // ── PLAIN TEXT INPUT ───────────────────────────────────────────
+            } else {
+
+                Object currentVal = getFieldValue(entity, field.getName());
+                String value      = currentVal != null ? currentVal.toString() : "";
+
+                writer.println("<input type='text' name='" + fieldName
+                        + "' value='" + value
+                        + "' placeholder='Enter " + fieldInfo.placeholder()
+                        + "' required/>");
             }
 
             writer.println("</div>");
@@ -379,6 +393,7 @@ public class ShowroomFramework {
 
         return sw.toString();
     }
+
     // Helper to find a "name" or "username" field to show in the dropdown
     private Object getDisplayLabel(Object obj) {
         try {
@@ -720,6 +735,122 @@ public class ShowroomFramework {
                 .getAttribute("activeUser");
 
         htmlTable(printWriter, clazz, tableData, contextPath,caller);
+        return stringWriter.toString();
+    }
+
+    public String htmlFilterForm(String contextPath,
+                                 String actionPath,
+                                 User caller) {
+
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter  writer       = new PrintWriter(stringWriter);
+
+        List<Showroom>  showrooms  = dao.selectAll(Showroom.class);
+        List<Brand>     brands     = dao.selectAll(Brand.class);
+        List<Category>  categories = dao.selectAll(Category.class);
+
+        writer.println("<div class='enterprise-filter-container'>");
+        writer.println("<form method='GET' action='" + contextPath + actionPath + "' class='filter-form'>");
+        writer.println("<h3 class='filter-title'>Filter Vehicles</h3>");
+        writer.println("<div class='filter-row'>");
+
+        // Showroom filter — ADMIN only
+        if (caller.getRole() == UserRole.ADMIN) {
+            writer.println("<div class='filter-group'>");
+            writer.println("<label class='filter-label'>Showroom</label>");
+            writer.println("<select name='showroomId' class='enterprise-select'>");
+            writer.println("<option value=''>All Showrooms</option>");
+            for (Showroom s : showrooms) {
+                writer.println("<option value='" + s.getId() + "'>"
+                        + s.getLocationName() + "</option>");
+            }
+            writer.println("</select>");
+            writer.println("</div>");
+        }
+
+        // Brand filter — Everyone ie ADMIN , MANAGER.SALES_REP and VIEWER
+        writer.println("<div class='filter-group'>");
+        writer.println("<label class='filter-label'>Brand</label>");
+        writer.println("<select name='brandId' class='enterprise-select'>");
+        writer.println("<option value=''>All Brands</option>");
+        for (Brand b : brands) {
+            writer.println("<option value='" + b.getId() + "'>"
+                    + b.getName() + "</option>");
+        }
+        writer.println("</select>");
+        writer.println("</div>");
+
+        // Category filter —Everyone ie ADMIN , MANAGER.SALES_REP and VIEWER
+        writer.println("<div class='filter-group'>");
+        writer.println("<label class='filter-label'>Category</label>");
+        writer.println("<select name='categoryId' class='enterprise-select'>");
+        writer.println("<option value=''>All Categories</option>");
+        for (Category c : categories) {
+            writer.println("<option value='" + c.getId() + "'>"
+                    + c.getName() + "</option>");
+        }
+        writer.println("</select>");
+        writer.println("</div>");
+
+        writer.println("</div>"); // filter-row
+
+        writer.println("<div class='filter-actions'>");
+        writer.println("<button type='submit' class='enterprise-btn' "
+                + "style='width:auto; padding: 10px 24px;'>Apply Filter</button>");
+        writer.println("<a href='" + contextPath + actionPath + "' "
+                + "class='enterprise-btn' "
+                + "style='width:auto; padding:10px 24px; "
+                + "background: rgba(255,255,255,0.08); "
+                + "text-decoration:none; margin-left:10px;'>Clear</a>");
+        writer.println("</div>");
+
+        writer.println("</form>");
+        writer.println("</div>");
+
+        // CSS
+        writer.println("""
+        <style>
+            .enterprise-filter-container {
+                max-width: 1200px;
+                margin: 30px auto 0;
+                background: rgba(15,23,42,0.88);
+                border-radius: 18px;
+                padding: 25px 30px;
+                border: 1px solid rgba(255,255,255,0.08);
+                font-family: 'Inter', sans-serif;
+            }
+            .filter-title {
+                color: #ffffff;
+                font-size: 1rem;
+                margin-bottom: 16px;
+                font-weight: 600;
+            }
+            .filter-row {
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
+                align-items: flex-end;
+            }
+            .filter-group {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                min-width: 180px;
+                flex: 1;
+            }
+            .filter-label {
+                color: #94a3b8;
+                font-size: 0.85rem;
+                font-weight: 500;
+            }
+            .filter-actions {
+                margin-top: 16px;
+                display: flex;
+                align-items: center;
+            }
+        </style>
+    """);
+
         return stringWriter.toString();
     }
 

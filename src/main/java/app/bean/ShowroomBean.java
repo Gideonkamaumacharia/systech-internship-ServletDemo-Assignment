@@ -1,6 +1,8 @@
 package app.bean;
 
+import app.dao.CachedDataProvider;
 import app.dao.ShowroomDAO;
+import app.framework.FrameworkDataProvider;
 import app.model.AuditLog;
 import app.model.Car;
 import app.model.Showroom;
@@ -30,6 +32,9 @@ public class ShowroomBean {
     @Inject
     private Event<AuditLog> auditLogEvent;
 
+    @Inject
+    FrameworkDataProvider dataProvider;
+
     public void createShowroom(Showroom showroom, User currentUser){
 
         if(!validator.isValid(showroom)){
@@ -41,6 +46,7 @@ public class ShowroomBean {
         showroom.setManager(manager);
 
         dao.insert(showroom);
+        dataProvider.evict(Showroom.class);
 
         AuditLog auditLog = new AuditLog();
         auditLog.setDetails("CREATE_SHOWROOM");
@@ -62,15 +68,16 @@ public class ShowroomBean {
     }
 
 
-    public List<Showroom> getShowrooms() throws SQLException {
+    public List<Showroom> getShowrooms() {
 
         return dao.findAll();
     }
 
-    public void remove(Long id){
+    public void remove(Long id,User currentUser){
 
         Showroom showroom = dao.findByShowroomId(id);
         dao.delete(id);
+        dataProvider.evict(Showroom.class);
 
         AuditLog log = new AuditLog();
         log.setActionPerformed("DELETE_SHOWROOM");
@@ -90,9 +97,9 @@ public class ShowroomBean {
         Showroom existingShowroom = dao.findByShowroomId(updatedShowroom.getId());
 
         existingShowroom.setLocationName(updatedShowroom.getLocationName());
-//        existingShowroom.setManagerId(updatedShowroom.getManagerId());
         existingShowroom.setCapacity(updatedShowroom.getCapacity());
 
         dao.update(existingShowroom);
+        dataProvider.evict(Showroom.class);
     }
 }

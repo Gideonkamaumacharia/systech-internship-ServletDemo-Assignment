@@ -58,8 +58,20 @@ public class ShowroomAction {
     }
 
     @ActionMapping(path = "/showroom/delete/{id}", method = "POST")
-    public ActionResponse delete(@PathVariable("id") Long id) throws Exception {
-        showroomBean.remove(id);
+    public ActionResponse delete(@PathVariable("id") Long id,HttpSession session) throws Exception {
+        User caller = getCallerOrThrow(session);
+        showroomBean.remove(id,caller);
         return ActionResponse.ofRedirect("/app/showroom/list");
+    }
+
+
+
+
+
+    private User getCallerOrThrow(HttpSession session) {
+        if (session == null) throw new SecurityException("No active session.");
+        User caller = (User) session.getAttribute("activeUser");
+        if (caller == null) throw new SecurityException("Not authenticated.");
+        return caller;
     }
 }

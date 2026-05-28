@@ -81,8 +81,9 @@
     <% } %>
 
     <form action="<%= request.getContextPath() %>/login" method="POST">
-        <input type="hidden" name="dest" value="<%= esc.apply(dest) %>">
-        <input type="text"     name="uname" placeholder="Enter Username" required>
+        <input type="hidden" name="dest"  value="<%= esc.apply(dest) %>">
+        <input type="text"     name="uname" placeholder="Enter Username" minlength="3"
+               maxlength="50" required>
         <input type="password" name="pass"  placeholder="Enter System Password" required>
         <button type="submit">Enter Showroom</button>
     </form>

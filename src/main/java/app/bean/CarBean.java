@@ -27,12 +27,24 @@ public class CarBean {
     @ValidatorQualifier(ValidatorQualifier.ValidationType.CAR)
     private Validate<Car> validator;
 
-    // REMOVE SecurityContext and UserDAO — no longer needed
-    @Inject private CarDAO dao;
-    @Inject private BrandDAO brandDAO;
-    @Inject private CategoryDAO categoryDAO;
-    @Inject private ShowroomDAO showroomDAO;
-    @Inject private Event<AuditLog> auditLogEvent;
+
+    @Inject
+    private CarDAO dao;
+
+    @Inject
+    private BrandDAO brandDAO;
+
+    @Inject
+    private CategoryDAO categoryDAO;
+
+    @Inject
+    private ShowroomDAO showroomDAO;
+
+    @Inject
+    private Event<AuditLog> auditLogEvent;
+
+    @Inject
+    private UserBean userBean;
 
     public void create(Car car, User caller) {
         if (caller.getRole() != UserRole.ADMIN && caller.getRole() != UserRole.MANAGER) {
@@ -104,12 +116,65 @@ public class CarBean {
         return dao.findById(id);
     }
 
-    public List<Car> getCars(String showroomId, String brandId, String categoryId) {
+    public List<Car> getCars(String showroomId, String brandId, String categoryId,User caller) {
+
+        User freshCaller = userBean.findById(caller.getId());
+
         Long parsedShowroomId = (showroomId != null && !showroomId.isEmpty()) ? Long.parseLong(showroomId) : null;
         Long parsedBrandId    = (brandId    != null && !brandId.isEmpty())    ? Long.parseLong(brandId)    : null;
         Long parsedCategoryId = (categoryId != null && !categoryId.isEmpty()) ? Long.parseLong(categoryId) : null;
-        return dao.findByCriteria(parsedShowroomId, parsedBrandId, parsedCategoryId);
+
+        if (freshCaller.getRole() == UserRole.ADMIN) {
+
+            return dao.findByCriteria(
+                    parsedShowroomId,
+                    parsedBrandId,
+                    parsedCategoryId
+            );
+        }
+
+        Long callerShowroomId =
+                caller.getShowroom().getId();
+
+        return dao.findByCriteria(callerShowroomId, parsedBrandId, parsedCategoryId);
     }
+
+
+
+/*  carBean.getCars("3",null,"3")
+    converts strings to Longs (null stays null)
+dao.findByCriteria(3L, null, 5L)
+        ↓  builds:
+   SELECT c FROM Car c WHERE 1=1
+    AND c.showroom.id = :showroomId
+  AND c.category.id = :categoryId
+   ORDER BY c.carModel ASC
+            ↓  returns List<Car>  */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // ── Helpers — caller passed in, no SecurityContext ────────
 
